@@ -21,7 +21,7 @@ import java.util.Optional;
 @ActiveProfiles("test")
 public class RegistrationServiceTest {
 
-    RegistrationServiceImpl registrationService;
+    RegistrationService registrationService;
 
     @MockBean
     RegistrationRepository repository;
