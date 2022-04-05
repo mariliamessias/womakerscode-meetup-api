@@ -1,6 +1,7 @@
 package com.womakerscode.meetup.service;
 
 import com.womakerscode.meetup.model.entity.Registration;
+import com.womakerscode.meetup.model.entity.dto.RegistrationDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
@@ -17,6 +18,4 @@ public interface RegistrationService {
     Registration update(Registration registration);
 
     Page<Registration> find(Registration filter, PageRequest pageRequest);
-
-    Optional<Registration> getRegistrationByRegistrationAttribute(String registrationAttribute);
 }

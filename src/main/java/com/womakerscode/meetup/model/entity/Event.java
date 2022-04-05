@@ -8,34 +8,33 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Data
 @Entity
 @Table
-public class Registration {
-
+public class Event {
     @Id
     @Column
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
-    private Status status;
-
-    @Column
-    private String description;
-
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
-    private User user;
-
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "event_id", referencedColumnName = "id")
-    private Event event;
+    @Column(name = "description")
+    private String name;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
+    @Column
+    private Status status;
+
+    @Column
+    private Integer maximunSpots;
+
+    @Column
+    private Integer alocatedSpots;
+
+    @OneToOne(mappedBy = "event")
+    private Registration registration;
 }

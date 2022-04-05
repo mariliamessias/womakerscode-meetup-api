@@ -14,28 +14,34 @@ import java.time.LocalDateTime;
 @Data
 @Entity
 @Table
-public class Registration {
+public class Address {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
-    private Status status;
+    @Column(name = "public_place")
+    private String publicPlace;
 
     @Column
-    private String description;
+    private Integer number;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
-    private User user;
+    @Column(name = "zip_code")
+    private String zipCode;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "event_id", referencedColumnName = "id")
-    private Event event;
+    @Column
+    private String neighborhood;
+
+    @Column
+    private String city;
+
+    @Column
+    private String country;
+
+    @OneToOne(mappedBy = "address")
+    private Person person;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
-
 }

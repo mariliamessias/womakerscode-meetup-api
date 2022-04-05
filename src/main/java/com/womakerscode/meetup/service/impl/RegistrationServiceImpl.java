@@ -1,9 +1,9 @@
 package com.womakerscode.meetup.service.impl;
 
-import com.womakerscode.meetup.exception.BusinessException;
 import com.womakerscode.meetup.model.entity.Registration;
 import com.womakerscode.meetup.repository.RegistrationRepository;
 import com.womakerscode.meetup.service.RegistrationService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Page;
@@ -17,18 +17,11 @@ import static java.util.Objects.isNull;
 @Service
 public class RegistrationServiceImpl implements RegistrationService {
 
+    @Autowired
     RegistrationRepository repository;
-
-    public RegistrationServiceImpl(RegistrationRepository repository) {
-        this.repository = repository;
-    }
 
     @Override
     public Registration save(Registration registration) {
-        if (repository.existsByRegistration(registration.getRegistration())) {
-            throw new BusinessException("Registration already created");
-        }
-
         return repository.save(registration);
     }
 
@@ -42,7 +35,12 @@ public class RegistrationServiceImpl implements RegistrationService {
         if (isNull(registration) || isNull(registration.getId())) {
             throw new IllegalArgumentException("Registration id cannot be null");
         }
-        repository.delete(registration);
+
+        Integer result = repository.deleteRegistrationById(registration.getId());
+
+        if (result == 0) {
+            throw new IllegalArgumentException("Fail to delete registration");
+        }
     }
 
     @Override
@@ -64,8 +62,4 @@ public class RegistrationServiceImpl implements RegistrationService {
         return repository.findAll(example, pageRequest);
     }
 
-    @Override
-    public Optional<Registration> getRegistrationByRegistrationAttribute(String registrationAttribute) {
-        return repository.findByRegistration(registrationAttribute);
-    }
 }
