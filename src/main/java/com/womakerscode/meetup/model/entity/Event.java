@@ -1,5 +1,6 @@
 package com.womakerscode.meetup.model.entity;
 
+import com.womakerscode.meetup.model.EventResponse;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -34,4 +35,8 @@ public class Event {
 
     @Column
     private Integer alocatedSpots;
+
+    public EventResponse toEventResponse() {
+       return EventResponse.builder().build();
+    }
 }

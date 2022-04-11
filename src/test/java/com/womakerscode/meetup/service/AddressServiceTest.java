@@ -49,6 +49,28 @@ public class AddressServiceTest {
         assertThat(savedAddress.getCreatedAt()).isEqualTo(creationDate);
     }
 
+
+    @Test
+    @DisplayName("Should find an address")
+    public void fidAddress() {
+        LocalDateTime creationDate = LocalDateTime.now();
+        Long id = 1L;
+        //cenario
+        Address address = buildAddress(creationDate);
+
+        //execução
+        when(repository.findById(any())).thenReturn(Optional.of(address));
+
+        Optional<Address> savedAddress = addressService.getAddressById(id);
+
+        //assert
+        assertThat(savedAddress.isPresent()).isTrue();
+        assertThat(savedAddress.get().getCountry()).isEqualTo("Test Country");
+        assertThat(savedAddress.get().getNeighborhood()).isEqualTo("Test neighborhood");
+        assertThat(savedAddress.get().getNumber()).isEqualTo(123);
+        assertThat(savedAddress.get().getCreatedAt()).isEqualTo(creationDate);
+    }
+
     private Address buildAddress(LocalDateTime creationDate) {
         return Address.builder()
                 .id(11L)

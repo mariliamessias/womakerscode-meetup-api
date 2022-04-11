@@ -12,29 +12,20 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class AddressDTO {
-
+public class AddressResponse {
     private Long id;
 
-    @NotEmpty
     private String publicPlace;
 
-    @NotEmpty
     private Integer number;
 
-    @NotEmpty
     private String zipCode;
 
-    @NotEmpty
     private String neighborhood;
 
-    @NotEmpty
     private String city;
 
-    @NotEmpty
     private String country;
 
-    @NotEmpty
     private LocalDateTime createdAt;
-
 }

@@ -1,5 +1,6 @@
 package com.womakerscode.meetup.model.entity;
 
+import com.womakerscode.meetup.model.PersonResponse;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -37,4 +38,8 @@ public class Person {
     @OneToOne
     @JoinColumn(name = "address_id", referencedColumnName = "id")
     private Address address;
+
+    public PersonResponse toPersonResponse() {
+        return PersonResponse.builder().build();
+    }
 }

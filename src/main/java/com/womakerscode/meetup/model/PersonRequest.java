@@ -1,12 +1,14 @@
 package com.womakerscode.meetup.model;
 
-import com.womakerscode.meetup.model.entity.Role;
+
+import com.womakerscode.meetup.model.entity.Address;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.Max;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import java.time.LocalDate;
 
@@ -14,21 +16,19 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UserDTO {
-
-    private Long id;
+public class PersonRequest {
 
     @NotEmpty
-    private Role role;
+    @Min(10)
+    private String name;
 
     @NotEmpty
-    @Max(50)
-    private String userName;
+    private LocalDate birthDate;
 
     @NotEmpty
-    private String password;
+    @Email
+    private String email;
 
-    @NotEmpty
-    private LocalDate createdAt;
+    private AddressRequest address;
 
 }

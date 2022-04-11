@@ -1,7 +1,6 @@
 package com.womakerscode.meetup.repository;
 
 import com.github.database.rider.core.api.connection.ConnectionHolder;
-import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.junit5.DBUnitExtension;
 import com.womakerscode.meetup.model.RegistrationRequest;
 import com.womakerscode.meetup.model.entity.*;
@@ -39,12 +38,11 @@ public class RegistrationRepositoryTest {
     }
 
     @Test
-    @DataSet("registration.yml")
     @DisplayName("Should save Registration with success from repository")
-    public void testFindAllSuccess() {
+    public void testSaveSuccess() {
 
         Registration registrationExpected = Registration.builder()
-                .id(4L)
+                .id(1L)
                 .description("teste")
                 .status(Status.CREATED)
                 .createdAt(LocalDateTime.now())
@@ -67,7 +65,6 @@ public class RegistrationRepositoryTest {
     }
 
     @Test
-    @DataSet("registration.yml")
     @DisplayName("Should delete Registration with success from repository")
     public void testDeleteSuccess() {
 
@@ -81,7 +78,6 @@ public class RegistrationRepositoryTest {
     }
 
     @Test
-    @DataSet("registration.yml")
     @DisplayName("Should not delete an Registration when don't exists from repository")
     public void testDeleteNotExecuted() {
 
@@ -95,9 +91,8 @@ public class RegistrationRepositoryTest {
     }
 
     @Test
-    @DataSet("registration.yml")
-    @DisplayName("Should save a new registration in repository")
-    public void testSaveRegistration() {
+    @DisplayName("Should save a new registration in repository with user and event")
+    public void testSaveWithUserAndEvent() {
 
         Event event = Event.builder().name("event name").status(Status.ACTIVE).alocatedSpots(50).maximunSpots(100).name("event test").build();
         User user = User.builder().userName("user.name").role(Role.NORMAL).build();
@@ -118,12 +113,10 @@ public class RegistrationRepositoryTest {
     }
 
     @Test
-    @DataSet("registration.yml")
     @DisplayName("Validate if already have other registration by userId and eventId repository")
     public void testVerifyIfExistsRegistration() {
 
         //execucao
-
         Event event = Event.builder().name("event name").status(Status.ACTIVE).alocatedSpots(50).maximunSpots(100).name("event test").build();
         User user = User.builder().userName("user.name").role(Role.NORMAL).build();
 
@@ -135,7 +128,7 @@ public class RegistrationRepositoryTest {
         repository.save(registration);
 
         //execucao
-        Boolean result = repository.existsByUserIdAndEventId(2L, 2L);
+        Boolean result = repository.existsByUserIdAndEventId(1L, 1L);
 
         // assert
         Assertions.assertNotNull(result, "Registration should not be null");

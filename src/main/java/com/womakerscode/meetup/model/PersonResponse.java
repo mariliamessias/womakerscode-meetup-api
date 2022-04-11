@@ -15,22 +15,17 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class PersonDTO {
+public class PersonResponse {
 
     private Long id;
 
-    @NotEmpty
-    @Min(10)
     private String name;
 
-    @NotEmpty
     private LocalDate birthDate;
 
-    @NotEmpty
-    @Email
     private String email;
 
-    @NotEmpty
     private LocalDateTime createdAt;
 
+    private AddressResponse address;
 }

@@ -6,6 +6,8 @@ import com.womakerscode.meetup.service.AddressService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class AddressServiceImpl implements AddressService {
 
@@ -15,5 +17,10 @@ public class AddressServiceImpl implements AddressService {
     @Override
     public Address save(Address address) {
         return repository.save(address);
+    }
+
+    @Override
+    public Optional<Address> getAddressById(Long id) {
+        return repository.findById(id);
     }
 }

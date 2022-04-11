@@ -34,7 +34,7 @@ public class RegistrationRequest {
     @JsonProperty("event_id")
     private Long eventId;
 
-    private Status status = Status.ACTIVE;
+    private Status status;
 
     public Registration toSaveRegistration(User user, Event event) {
         return Registration.builder()
