@@ -12,4 +12,6 @@ public interface RegistrationRepository extends JpaRepository<Registration, Long
     @Transactional
     Integer deleteRegistrationById(Long id);
 
+    Boolean existsByUserIdAndEventId(Long userId, Long eventId);
+
 }

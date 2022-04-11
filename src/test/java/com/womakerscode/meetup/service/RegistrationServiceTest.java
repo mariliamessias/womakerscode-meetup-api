@@ -1,5 +1,6 @@
 package com.womakerscode.meetup.service;
 
+import com.womakerscode.meetup.model.RegistrationRequest;
 import com.womakerscode.meetup.model.entity.Registration;
 import com.womakerscode.meetup.repository.RegistrationRepository;
 import com.womakerscode.meetup.service.impl.RegistrationServiceImpl;
@@ -40,15 +41,21 @@ public class RegistrationServiceTest {
     @DisplayName("Should save an registration")
     public void saveRegistrationTest() {
         LocalDateTime creationDate = LocalDateTime.now();
+        Long userId = 1L;
+        Long eventId = 1L;
 
         //cenario
-        Registration registration = buildRegistration(creationDate);
+        RegistrationRequest registrationRequest = RegistrationRequest.builder()
+                .description("test")
+                .eventId(eventId)
+                .userId(userId)
+                .build();
 
         //execução
         when(repository.findById(any())).thenReturn(Optional.empty());
-        when(repository.save(registration)).thenReturn(buildRegistration(creationDate));
+        when(repository.save(any(Registration.class))).thenReturn(buildRegistration(creationDate));
 
-        Registration savedRegistration = registrationService.save(registration);
+        Registration savedRegistration = registrationService.save(registrationRequest);
 
         //assert
         assertThat(savedRegistration.getCreatedAt()).isEqualTo(creationDate);
@@ -95,16 +102,15 @@ public class RegistrationServiceTest {
     }
 
     @Test
-    @DisplayName("Should delete an student")
+    @DisplayName("Should delete an registration")
     public void deleteRegistrationTest() {
 
         //cenario
         Long id = 11L;
-        Registration registration = Registration.builder().id(11L).build();
         when(repository.deleteRegistrationById(id)).thenReturn(1);
 
         //execução
-        assertDoesNotThrow(() -> registrationService.delete(registration));
+        assertDoesNotThrow(() -> registrationService.delete(id));
 
         //asserts
         verify(repository, Mockito.times(1)).deleteRegistrationById(id);
@@ -115,17 +121,25 @@ public class RegistrationServiceTest {
     @DisplayName("Should update an registration")
     public void updateRegistrationTest() {
         LocalDateTime creationDate = LocalDateTime.now();
+        Long userId = 1L;
+        Long eventId = 1L;
 
         //cenario
         Long id = 101L;
-        Registration updatingRegistration = Registration.builder().id(id).build();
+
+        RegistrationRequest registrationRequest = RegistrationRequest.builder()
+                .description("test")
+                .eventId(eventId)
+                .userId(userId)
+                .build();
 
         //execução
         Registration updatedRegistration = buildRegistration(creationDate);
         updatedRegistration.setId(id);
 
-        when(repository.save(updatingRegistration)).thenReturn(updatedRegistration);
-        Registration registration = registrationService.update(updatingRegistration);
+        when(repository.findById(id)).thenReturn(Optional.of(updatedRegistration));
+        when(repository.save(any(Registration.class))).thenReturn(updatedRegistration);
+        Registration registration = registrationService.update(registrationRequest, id);
 
         //asserts
         assertThat(registration.getId()).isEqualTo(updatedRegistration.getId());

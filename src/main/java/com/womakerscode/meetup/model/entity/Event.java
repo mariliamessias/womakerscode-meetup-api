@@ -34,7 +34,4 @@ public class Event {
 
     @Column
     private Integer alocatedSpots;
-
-    @OneToOne(mappedBy = "event")
-    private Registration registration;
 }

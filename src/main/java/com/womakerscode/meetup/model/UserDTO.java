@@ -1,4 +1,4 @@
-package com.womakerscode.meetup.model.entity.dto;
+package com.womakerscode.meetup.model;
 
 import com.womakerscode.meetup.model.entity.Role;
 import lombok.AllArgsConstructor;

@@ -1,5 +1,6 @@
 package com.womakerscode.meetup.model.entity;
 
+import com.womakerscode.meetup.model.RegistrationResponse;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -37,5 +38,14 @@ public class Registration {
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
+
+    public RegistrationResponse toRegistrationResponse() {
+        return RegistrationResponse.builder()
+                .description(description)
+                .createdAt(createdAt)
+                .id(id)
+                .status(status)
+                .build();
+    }
 
 }

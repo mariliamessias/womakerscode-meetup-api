@@ -1,12 +1,10 @@
-package com.womakerscode.meetup.model.entity.dto;
+package com.womakerscode.meetup.model;
 
-import com.womakerscode.meetup.model.entity.Status;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import java.time.LocalDateTime;
 
@@ -14,23 +12,29 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class EventDTO {
+public class AddressDTO {
+
     private Long id;
 
     @NotEmpty
-    private String name;
+    private String publicPlace;
+
+    @NotEmpty
+    private Integer number;
+
+    @NotEmpty
+    private String zipCode;
+
+    @NotEmpty
+    private String neighborhood;
+
+    @NotEmpty
+    private String city;
+
+    @NotEmpty
+    private String country;
 
     @NotEmpty
     private LocalDateTime createdAt;
-
-    @NotEmpty
-    private Status status;
-
-    @NotEmpty
-    @Min(1)
-    private Integer maximunSpots;
-
-    @NotEmpty
-    private Integer alocatedSpots;
 
 }

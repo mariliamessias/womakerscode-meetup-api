@@ -39,9 +39,6 @@ public class Address {
     @Column
     private String country;
 
-    @OneToOne(mappedBy = "address")
-    private Person person;
-
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 }

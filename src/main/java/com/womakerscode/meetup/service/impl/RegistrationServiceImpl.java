@@ -1,5 +1,8 @@
 package com.womakerscode.meetup.service.impl;
 
+import com.womakerscode.meetup.exceptions.BusinessException;
+import com.womakerscode.meetup.exceptions.ResourceNotFoundException;
+import com.womakerscode.meetup.model.RegistrationRequest;
 import com.womakerscode.meetup.model.entity.Registration;
 import com.womakerscode.meetup.repository.RegistrationRepository;
 import com.womakerscode.meetup.service.RegistrationService;
@@ -7,12 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
-
-import static java.util.Objects.isNull;
 
 @Service
 public class RegistrationServiceImpl implements RegistrationService {
@@ -21,8 +22,13 @@ public class RegistrationServiceImpl implements RegistrationService {
     RegistrationRepository repository;
 
     @Override
-    public Registration save(Registration registration) {
-        return repository.save(registration);
+    public Registration save(RegistrationRequest registrationRequest) {
+
+        if (repository.existsByUserIdAndEventId(registrationRequest.getUserId(), registrationRequest.getEventId())) {
+            throw new BusinessException("Registration already created");
+        }
+
+        return repository.save(registrationRequest.toSaveRegistration());
     }
 
     @Override
@@ -31,28 +37,30 @@ public class RegistrationServiceImpl implements RegistrationService {
     }
 
     @Override
-    public void delete(Registration registration) {
-        if (isNull(registration) || isNull(registration.getId())) {
-            throw new IllegalArgumentException("Registration id cannot be null");
-        }
+    public void delete(Long id) {
 
-        Integer result = repository.deleteRegistrationById(registration.getId());
+        Integer result = repository.deleteRegistrationById(id);
 
         if (result == 0) {
-            throw new IllegalArgumentException("Fail to delete registration");
+            throw new BusinessException("Fail to delete registration with id: " + id);
         }
     }
 
     @Override
-    public Registration update(Registration registration) {
-        if (isNull(registration) || isNull(registration.getId())) {
-            throw new IllegalArgumentException("Registration id cannot be null");
-        }
-        return repository.save(registration);
+    public Registration update(RegistrationRequest registration, Long id) {
+        return repository.findById(id).map(result -> {
+
+            result.setDescription(registration.getDescription());
+            result.setStatus(registration.getStatus());
+
+            return repository.save(result);
+
+        }).orElseThrow(() -> new ResourceNotFoundException("Registration id: " + id + " not found"));
+
     }
 
     @Override
-    public Page<Registration> find(Registration filter, PageRequest pageRequest) {
+    public Page<Registration> find(Registration filter, Pageable pageRequest) {
         Example<Registration> example = Example.of(filter, ExampleMatcher
                 .matching()
                 .withIgnoreCase()
