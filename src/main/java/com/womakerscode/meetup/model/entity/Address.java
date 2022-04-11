@@ -17,8 +17,8 @@ import java.time.LocalDateTime;
 public class Address {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "public_place")

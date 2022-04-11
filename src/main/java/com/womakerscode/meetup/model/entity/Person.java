@@ -34,7 +34,7 @@ public class Person {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne
     @JoinColumn(name = "address_id", referencedColumnName = "id")
     private Address address;
 }

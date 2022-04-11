@@ -28,11 +28,11 @@ public class Registration {
     @Column
     private String description;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne
     @JoinColumn(name = "event_id", referencedColumnName = "id")
     private Event event;
 

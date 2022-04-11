@@ -13,7 +13,7 @@ import java.time.LocalDate;
 @Builder
 @Data
 @Entity
-@Table
+@Table(name = "users")
 public class User {
     @Id
     @Column
@@ -27,12 +27,12 @@ public class User {
     private String userName;
 
     @Column
-    private String password;
+    private String token;
 
     @Column(name = "created_at")
     private LocalDate createdAt;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne
     @JoinColumn(name = "person_id", referencedColumnName = "id")
     private Person person;
 

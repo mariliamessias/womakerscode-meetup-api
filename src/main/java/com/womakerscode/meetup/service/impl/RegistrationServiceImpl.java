@@ -3,8 +3,12 @@ package com.womakerscode.meetup.service.impl;
 import com.womakerscode.meetup.exceptions.BusinessException;
 import com.womakerscode.meetup.exceptions.ResourceNotFoundException;
 import com.womakerscode.meetup.model.RegistrationRequest;
+import com.womakerscode.meetup.model.entity.Event;
 import com.womakerscode.meetup.model.entity.Registration;
+import com.womakerscode.meetup.model.entity.User;
+import com.womakerscode.meetup.repository.EventRepository;
 import com.womakerscode.meetup.repository.RegistrationRepository;
+import com.womakerscode.meetup.repository.UserRepository;
 import com.womakerscode.meetup.service.RegistrationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
@@ -21,14 +25,33 @@ public class RegistrationServiceImpl implements RegistrationService {
     @Autowired
     RegistrationRepository repository;
 
+    @Autowired
+    EventRepository eventRepository;
+
+    @Autowired
+    UserRepository userRepository;
+
     @Override
     public Registration save(RegistrationRequest registrationRequest) {
+
+        Event event = findEvent(registrationRequest.getEventId());
+        User user = findUser(registrationRequest.getUserId());
 
         if (repository.existsByUserIdAndEventId(registrationRequest.getUserId(), registrationRequest.getEventId())) {
             throw new BusinessException("Registration already created");
         }
 
-        return repository.save(registrationRequest.toSaveRegistration());
+        return repository.save(registrationRequest.toSaveRegistration(user, event));
+    }
+
+    private Event findEvent(Long id) {
+        return eventRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Event id: " + id + " not found"));
+    }
+
+    private User findUser(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User id: " + id + " not found"));
     }
 
     @Override

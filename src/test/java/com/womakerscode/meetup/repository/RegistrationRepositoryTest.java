@@ -4,10 +4,7 @@ import com.github.database.rider.core.api.connection.ConnectionHolder;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.junit5.DBUnitExtension;
 import com.womakerscode.meetup.model.RegistrationRequest;
-import com.womakerscode.meetup.model.entity.Event;
-import com.womakerscode.meetup.model.entity.Registration;
-import com.womakerscode.meetup.model.entity.Status;
-import com.womakerscode.meetup.model.entity.User;
+import com.womakerscode.meetup.model.entity.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -47,7 +44,7 @@ public class RegistrationRepositoryTest {
     public void testFindAllSuccess() {
 
         Registration registrationExpected = Registration.builder()
-                .id(2L)
+                .id(4L)
                 .description("teste")
                 .status(Status.CREATED)
                 .createdAt(LocalDateTime.now())
@@ -102,13 +99,19 @@ public class RegistrationRepositoryTest {
     @DisplayName("Should save a new registration in repository")
     public void testSaveRegistration() {
 
-        Registration registration = RegistrationRequest.builder().description("test").build().toSaveRegistration();
+        Event event = Event.builder().name("event name").status(Status.ACTIVE).alocatedSpots(50).maximunSpots(100).name("event test").build();
+        User user = User.builder().userName("user.name").role(Role.NORMAL).build();
+
+        User userSaved = userRepository.save(user);
+        Event eventSaved = eventRepository.save(event);
+
+        Registration registration = RegistrationRequest.builder().description("test").build().toSaveRegistration(userSaved, eventSaved);
         //execucao
         Registration registrationSaved = repository.save(registration);
 
         // assert
         Assertions.assertNotNull(registrationSaved, "Registration should not be null");
-        Assertions.assertEquals(registrationSaved.getId(), 2L, "Registrations id must be the same");
+        Assertions.assertEquals(registrationSaved.getId(), 3L, "Registrations id must be the same");
         Assertions.assertEquals(registrationSaved.getStatus(), Status.CREATED, "Registrations status must be the same");
         Assertions.assertEquals(registrationSaved.getDescription(), "test", "Registrations description must be the same");
 
@@ -119,21 +122,20 @@ public class RegistrationRepositoryTest {
     @DisplayName("Validate if already have other registration by userId and eventId repository")
     public void testVerifyIfExistsRegistration() {
 
-        Registration registration = RegistrationRequest.builder().description("test").build().toSaveRegistration();
-        User user = User.builder().id(1L).build();
-        Event event = Event.builder().id(1L).build();
-
-
         //execucao
+
+        Event event = Event.builder().name("event name").status(Status.ACTIVE).alocatedSpots(50).maximunSpots(100).name("event test").build();
+        User user = User.builder().userName("user.name").role(Role.NORMAL).build();
+
         User userSaved = userRepository.save(user);
         Event eventSaved = eventRepository.save(event);
 
-        registration.setUser(userSaved);
-        registration.setEvent(eventSaved);
-        Registration registrationSaved = repository.save(registration);
+        Registration registration = RegistrationRequest.builder().description("test").status(Status.ACTIVE).build().toSaveRegistration(userSaved, eventSaved);
+
+        repository.save(registration);
 
         //execucao
-        Boolean result = repository.existsByUserIdAndEventId(1L, 2L);
+        Boolean result = repository.existsByUserIdAndEventId(2L, 2L);
 
         // assert
         Assertions.assertNotNull(result, "Registration should not be null");

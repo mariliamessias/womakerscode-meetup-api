@@ -4,3 +4,14 @@ registration:
     description: "teste"
     created_at:  "2020-01-01"
 
+users:
+  - id: 1
+
+event:
+  - id: 1
+
+person:
+  - id: 1
+
+address:
+  - id: 1

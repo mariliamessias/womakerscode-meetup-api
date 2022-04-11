@@ -36,11 +36,11 @@ public class RegistrationRequest {
 
     private Status status = Status.ACTIVE;
 
-    public Registration toSaveRegistration() {
+    public Registration toSaveRegistration(User user, Event event) {
         return Registration.builder()
                 .status(CREATED)
-//                .user(user)
-//                .event(event)
+                .user(user)
+                .event(event)
                 .createdAt(LocalDateTime.now())
                 .description(description)
                 .build();

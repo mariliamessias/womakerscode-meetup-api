@@ -1,8 +1,12 @@
 package com.womakerscode.meetup.service;
 
 import com.womakerscode.meetup.model.RegistrationRequest;
+import com.womakerscode.meetup.model.entity.Event;
 import com.womakerscode.meetup.model.entity.Registration;
+import com.womakerscode.meetup.model.entity.User;
+import com.womakerscode.meetup.repository.EventRepository;
 import com.womakerscode.meetup.repository.RegistrationRepository;
+import com.womakerscode.meetup.repository.UserRepository;
 import com.womakerscode.meetup.service.impl.RegistrationServiceImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -37,6 +41,12 @@ public class RegistrationServiceTest {
     @Mock
     RegistrationRepository repository;
 
+    @Mock
+    UserRepository userRepository;
+
+    @Mock
+    EventRepository eventRepository;
+
     @Test
     @DisplayName("Should save an registration")
     public void saveRegistrationTest() {
@@ -51,8 +61,13 @@ public class RegistrationServiceTest {
                 .userId(userId)
                 .build();
 
+        User user = User.builder().build();
+        Event event = Event.builder().build();
         //execução
-        when(repository.findById(any())).thenReturn(Optional.empty());
+
+        when(eventRepository.findById(any())).thenReturn(Optional.of(event));
+        when(userRepository.findById(any())).thenReturn(Optional.of(user));
+
         when(repository.save(any(Registration.class))).thenReturn(buildRegistration(creationDate));
 
         Registration savedRegistration = registrationService.save(registrationRequest);
