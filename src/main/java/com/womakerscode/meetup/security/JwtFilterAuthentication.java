@@ -4,6 +4,7 @@ package com.womakerscode.meetup.security;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.womakerscode.meetup.configs.Properties;
 import com.womakerscode.meetup.data.UserDetail;
 import com.womakerscode.meetup.model.UserRequest;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -23,14 +24,13 @@ import java.util.Date;
 public class JwtFilterAuthentication extends UsernamePasswordAuthenticationFilter {
 
     private final AuthenticationManager authenticationManager;
-
     public static final int TOKEN_EXPIRATION = 600_000;
-    public static final String TOKEN_PASSWORD = "9ebf2b42-3a5a-4193-ac50-73ea5548af28";
+    private final Properties properties;
 
-    public JwtFilterAuthentication(AuthenticationManager authenticationManager) {
+    public JwtFilterAuthentication(AuthenticationManager authenticationManager, Properties properties) {
         this.authenticationManager = authenticationManager;
+        this.properties = properties;
     }
-
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
@@ -55,7 +55,7 @@ public class JwtFilterAuthentication extends UsernamePasswordAuthenticationFilte
         String token = JWT.create()
                 .withSubject(userDetail.getUsername())
                 .withExpiresAt(new Date(System.currentTimeMillis() + TOKEN_EXPIRATION))
-                .sign(Algorithm.HMAC512(TOKEN_PASSWORD));
+                .sign(Algorithm.HMAC512(properties.getProperty("token.password")));
 
         response.getWriter().write(token);
         response.getWriter().flush();

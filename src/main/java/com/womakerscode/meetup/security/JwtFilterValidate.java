@@ -2,6 +2,8 @@ package com.womakerscode.meetup.security;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.womakerscode.meetup.configs.Properties;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -19,6 +21,8 @@ public class JwtFilterValidate extends BasicAuthenticationFilter {
     public static final String HEADER_ATTRIBUTE = "Authorization";
     public static final String HEADER_PREFIX = "Bearer ";
 
+    @Autowired
+    private Properties properties;
 
     public JwtFilterValidate(AuthenticationManager authenticationManager) {
         super(authenticationManager);
@@ -42,7 +46,7 @@ public class JwtFilterValidate extends BasicAuthenticationFilter {
     }
 
     private UsernamePasswordAuthenticationToken getAuthenticationToken(String token) {
-        String user = JWT.require(Algorithm.HMAC512(JwtFilterAuthentication.TOKEN_PASSWORD))
+        String user = JWT.require(Algorithm.HMAC512(properties.getProperty("token.password")))
                 .build()
                 .verify(token)
                 .getSubject();

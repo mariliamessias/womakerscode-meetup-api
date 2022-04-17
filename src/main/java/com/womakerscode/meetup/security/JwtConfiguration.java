@@ -1,5 +1,6 @@
 package com.womakerscode.meetup.security;
 
+import com.womakerscode.meetup.configs.Properties;
 import com.womakerscode.meetup.service.impl.UserDetailServiceImpl;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -14,10 +15,12 @@ public class JwtConfiguration extends WebSecurityConfigurerAdapter {
 
     private final UserDetailServiceImpl userDetailService;
     private final PasswordEncoder passwordEncoder;
+    private final Properties configUtil;
 
-    public JwtConfiguration(UserDetailServiceImpl userDetailService, PasswordEncoder passwordEncoder) {
+    public JwtConfiguration(UserDetailServiceImpl userDetailService, PasswordEncoder passwordEncoder, Properties configUtil) {
         this.userDetailService = userDetailService;
         this.passwordEncoder = passwordEncoder;
+        this.configUtil = configUtil;
     }
 
     @Override
@@ -31,7 +34,7 @@ public class JwtConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST, "/login", "/user", "/person").permitAll()
                 .anyRequest().authenticated()
                 .and()
-                .addFilter(new JwtFilterAuthentication(authenticationManager()))
+                .addFilter(new JwtFilterAuthentication(authenticationManager(), configUtil))
                 .addFilter(new JwtFilterValidate(authenticationManager()))
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }
