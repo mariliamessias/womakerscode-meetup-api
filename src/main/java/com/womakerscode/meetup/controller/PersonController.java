@@ -2,7 +2,6 @@ package com.womakerscode.meetup.controller;
 
 import com.womakerscode.meetup.model.PersonRequest;
 import com.womakerscode.meetup.model.PersonResponse;
-import com.womakerscode.meetup.model.entity.Event;
 import com.womakerscode.meetup.model.entity.Person;
 import com.womakerscode.meetup.service.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,19 +31,6 @@ public class PersonController {
         return personService
                 .getPersonById(id)
                 .map(Person::toPersonResponse)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-    }
-
-    @DeleteMapping("{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable Long id) {
-        personService.delete(id);
-    }
-
-    @PutMapping("{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public PersonResponse update(@PathVariable Long id, @RequestBody @Valid PersonRequest request) {
-        return personService.update(request, id)
-                .toPersonResponse();
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Person id: "+ id + " Not Found"));
     }
 }

@@ -22,12 +22,17 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-	compileOnly 'org.projectlombok:lombok'
 	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.0'
+	implementation 'org.springframework.security:spring-security-core:5.6.2'
+	implementation 'org.springframework.boot:spring-boot-starter-security:2.6.6'
+	implementation 'com.auth0:java-jwt:3.19.1'
+
+	annotationProcessor 'org.projectlombok:lombok'
+	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'com.h2database:h2'
+
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'com.github.database-rider:rider-junit5:1.32.3'
-	annotationProcessor 'org.projectlombok:lombok'
 }
 
 tasks.named('test') {

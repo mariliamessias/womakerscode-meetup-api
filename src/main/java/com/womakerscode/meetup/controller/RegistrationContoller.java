@@ -36,7 +36,7 @@ public class RegistrationContoller {
         return registrationService
                 .getRegistrationById(id)
                 .map(Registration::toRegistrationResponse)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Registration id: "+ id + " Not Found"));
     }
 
     @DeleteMapping("{id}")

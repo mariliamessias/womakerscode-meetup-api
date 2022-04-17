@@ -13,7 +13,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Builder
 public class AddressResponse {
-    private Long id;
 
     private String publicPlace;
 

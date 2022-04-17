@@ -1,5 +1,6 @@
 package com.womakerscode.meetup.model.entity;
 
+import com.womakerscode.meetup.model.UserResponse;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -7,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -27,13 +29,22 @@ public class User {
     private String userName;
 
     @Column
-    private String token;
+    private String password;
 
     @Column(name = "created_at")
-    private LocalDate createdAt;
+    private LocalDateTime createdAt;
 
     @OneToOne
     @JoinColumn(name = "person_id", referencedColumnName = "id")
     private Person person;
+
+    public UserResponse toUserResponse() {
+       return UserResponse.builder()
+               .createdAt(createdAt)
+               .userName(userName)
+               .role(role)
+               .build();
+    }
+
 
 }

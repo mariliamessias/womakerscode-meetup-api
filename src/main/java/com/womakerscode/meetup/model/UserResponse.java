@@ -1,11 +1,12 @@
 package com.womakerscode.meetup.model;
 
+import com.womakerscode.meetup.model.entity.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
@@ -13,7 +14,9 @@ import java.time.LocalDate;
 @Builder
 public class UserResponse {
 
-    private String token;
+    private String userName;
 
-    private LocalDate createdAt;
+    private LocalDateTime createdAt;
+
+    private Role role;
 }

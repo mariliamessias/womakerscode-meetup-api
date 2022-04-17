@@ -1,11 +1,14 @@
 package com.womakerscode.meetup.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.womakerscode.meetup.model.entity.Address;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotEmpty;
+import java.time.LocalDateTime;
 
 
 @Data
@@ -15,12 +18,14 @@ import javax.validation.constraints.NotEmpty;
 public class AddressRequest {
 
     @NotEmpty
+    @JsonProperty("public_place")
     private String publicPlace;
 
     @NotEmpty
     private Integer number;
 
     @NotEmpty
+    @JsonProperty("zip_code")
     private String zipCode;
 
     @NotEmpty
@@ -32,4 +37,15 @@ public class AddressRequest {
     @NotEmpty
     private String country;
 
+    public Address toSaveAddress() {
+        return Address.builder()
+                .createdAt(LocalDateTime.now())
+                .neighborhood(neighborhood)
+                .publicPlace(publicPlace)
+                .number(number)
+                .city(city)
+                .zipCode(zipCode)
+                .country(country)
+                .build();
+    }
 }

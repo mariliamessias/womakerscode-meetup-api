@@ -1,5 +1,6 @@
 package com.womakerscode.meetup.model.entity;
 
+import com.womakerscode.meetup.model.AddressResponse;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -41,4 +42,16 @@ public class Address {
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
+
+    public AddressResponse toAddresResponse() {
+        return AddressResponse.builder()
+                .city(city)
+                .country(country)
+                .createdAt(createdAt)
+                .neighborhood(neighborhood)
+                .number(number)
+                .publicPlace(publicPlace)
+                .zipCode(zipCode)
+                .build();
+    }
 }

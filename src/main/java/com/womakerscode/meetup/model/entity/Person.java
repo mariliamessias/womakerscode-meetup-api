@@ -40,6 +40,13 @@ public class Person {
     private Address address;
 
     public PersonResponse toPersonResponse() {
-        return PersonResponse.builder().build();
+        return PersonResponse.builder()
+                .createdAt(createdAt)
+                .address(address.toAddresResponse())
+                .birthDate(birthDate)
+                .email(email)
+                .name(name)
+                .id(id)
+                .build();
     }
 }
