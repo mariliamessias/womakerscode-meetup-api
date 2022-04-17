@@ -1,6 +1,7 @@
 package com.womakerscode.meetup.service.impl;
 
 import com.womakerscode.meetup.exceptions.BusinessException;
+import com.womakerscode.meetup.exceptions.NotAllowedException;
 import com.womakerscode.meetup.exceptions.ResourceNotFoundException;
 import com.womakerscode.meetup.model.RegistrationRequest;
 import com.womakerscode.meetup.model.entity.Event;
@@ -31,6 +32,7 @@ public class RegistrationServiceImpl implements RegistrationService {
     @Autowired
     UserRepository userRepository;
 
+
     @Override
     public Registration save(RegistrationRequest registrationRequest) {
 
@@ -41,12 +43,20 @@ public class RegistrationServiceImpl implements RegistrationService {
             throw new BusinessException("Registration already created");
         }
 
+        event.setAlocatedSpots(event.getAlocatedSpots() + 1);
+        eventRepository.save(event);
         return repository.save(registrationRequest.toSaveRegistration(user, event));
     }
 
     private Event findEvent(Long id) {
-        return eventRepository.findById(id)
+        Event event = eventRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Event id: " + id + " not found"));
+
+        if (event.getAlocatedSpots() < event.getAlocatedSpots()) {
+            throw new NotAllowedException("Event id: " + id + " is not empty.");
+        }
+
+        return event;
     }
 
     private User findUser(Long id) {

@@ -37,6 +37,13 @@ public class Event {
     private Integer alocatedSpots;
 
     public EventResponse toEventResponse() {
-       return EventResponse.builder().build();
+       return EventResponse.builder()
+               .name(name)
+               .id(id)
+               .status(status)
+               .maximunSpots(maximunSpots)
+               .alocatedSpots(alocatedSpots)
+               .createdAt(createdAt)
+               .build();
     }
 }
