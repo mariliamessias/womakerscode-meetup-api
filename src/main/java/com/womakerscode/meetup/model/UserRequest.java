@@ -30,14 +30,11 @@ public class UserRequest {
     @Max(50)
     private String password;
 
-    private Long personId;
-
-    public User toSaveUser(Person person) {
+    public User toSaveUser() {
         return User.builder()
                 .userName(userName)
                 .password(password)
                 .role(role)
-                .person(person)
                 .createdAt(LocalDateTime.now())
                 .build();
     }

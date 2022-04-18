@@ -6,7 +6,6 @@ import com.womakerscode.meetup.model.UserRequest;
 import com.womakerscode.meetup.model.entity.Registration;
 import com.womakerscode.meetup.model.entity.Role;
 import com.womakerscode.meetup.model.entity.User;
-import com.womakerscode.meetup.repository.PersonRepository;
 import com.womakerscode.meetup.repository.UserRepository;
 import com.womakerscode.meetup.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,9 +21,6 @@ public class UserServiceImpl implements UserService {
     UserRepository userRepository;
 
     @Autowired
-    PersonRepository personRepository;
-
-    @Autowired
     PasswordEncoder encoder;
 
     @Override
@@ -37,9 +33,7 @@ public class UserServiceImpl implements UserService {
         userRequest.setPassword(encoder.encode(userRequest.getPassword()));
         if (userRequest.getRole() == null) userRequest.setRole(Role.NORMAL);
 
-        return personRepository.findById(userRequest.getPersonId())
-                .map(result -> userRepository.save(userRequest.toSaveUser(result)))
-                .orElseThrow(() -> new ResourceNotFoundException("Person id: " + userRequest.getPersonId() + " not found"));
+        return userRepository.save(userRequest.toSaveUser());
 
     }
 

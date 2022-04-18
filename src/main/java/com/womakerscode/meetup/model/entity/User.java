@@ -37,10 +37,6 @@ public class User {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-    @OneToOne
-    @JoinColumn(name = "person_id", referencedColumnName = "id")
-    private Person person;
-
     @OneToMany(mappedBy = "user")
     private List<Registration> registrations = new ArrayList<>();
 

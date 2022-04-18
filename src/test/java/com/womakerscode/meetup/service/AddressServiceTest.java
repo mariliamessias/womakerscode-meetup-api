@@ -49,7 +49,6 @@ public class AddressServiceTest {
         assertThat(savedAddress.getCreatedAt()).isEqualTo(creationDate);
     }
 
-
     @Test
     @DisplayName("Should find an address")
     public void fidAddress() {

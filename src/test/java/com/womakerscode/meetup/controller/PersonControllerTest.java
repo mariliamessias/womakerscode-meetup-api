@@ -12,6 +12,7 @@ import com.womakerscode.meetup.model.entity.Person;
 import com.womakerscode.meetup.model.entity.User;
 import com.womakerscode.meetup.service.PersonService;
 import com.womakerscode.meetup.service.impl.UserDetailServiceImpl;
+import com.womakerscode.meetup.service.impl.UserServiceImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -114,6 +115,7 @@ public class PersonControllerTest {
         return PersonRequest.builder()
                 .name("test name test name")
                 .birthDate(LocalDate.now())
+                .userId(1L)
                 .email("email@email.com")
                 .address(AddressRequest.builder()
                         .city("city test")

@@ -31,7 +31,7 @@ public class JwtConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable().authorizeRequests()
-                .antMatchers(HttpMethod.POST, "/login", "/user", "/person").permitAll()
+                .antMatchers(HttpMethod.POST, "/login", "/user").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .addFilter(new JwtFilterAuthentication(authenticationManager(), properties))

@@ -5,7 +5,6 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.womakerscode.meetup.configs.Properties;
 import com.womakerscode.meetup.data.UserDetail;
-import com.womakerscode.meetup.model.EventRequest;
 import com.womakerscode.meetup.model.UserRequest;
 import com.womakerscode.meetup.model.entity.User;
 import com.womakerscode.meetup.service.UserService;

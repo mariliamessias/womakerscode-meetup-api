@@ -10,26 +10,26 @@ CREATE TABLE IF NOT EXISTS address (
     PRIMARY KEY (id)
 );
 
+CREATE TABLE IF NOT EXISTS users (
+    id bigint NOT NULL AUTO_INCREMENT,
+    role VARCHAR(100) NOT NULL,
+    user_name VARCHAR(100) NOT NULL,
+    password VARCHAR(150) NOT NULL,
+    created_at DATE NOT NULL,
+    PRIMARY KEY (id)
+);
+
 CREATE TABLE IF NOT EXISTS person (
     id bigint NOT NULL AUTO_INCREMENT,
     address_id bigint NOT NULL,
+    user_id bigint NOT NULL,
     name VARCHAR(150) NOT NULL,
     birth_date DATE NOT NULL,
     email VARCHAR(150) NOT NULL,
     created_at DATE NOT NULL,
     PRIMARY KEY (id),
-    FOREIGN KEY (address_id) REFERENCES address(id)
-);
-
-CREATE TABLE IF NOT EXISTS users (
-    id bigint NOT NULL AUTO_INCREMENT,
-    person_id bigint NOT NULL,
-    role VARCHAR(100) NOT NULL,
-    user_name VARCHAR(100) NOT NULL,
-    password VARCHAR(150) NOT NULL,
-    created_at DATE NOT NULL,
-    PRIMARY KEY (id),
-    FOREIGN KEY (person_id) REFERENCES person(id)
+    FOREIGN KEY (address_id) REFERENCES address(id),
+    FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
 CREATE TABLE IF NOT EXISTS event (

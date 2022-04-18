@@ -39,6 +39,10 @@ public class Person {
     @JoinColumn(name = "address_id", referencedColumnName = "id")
     private Address address;
 
+    @OneToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    private User user;
+
     public PersonResponse toPersonResponse() {
         return PersonResponse.builder()
                 .createdAt(createdAt)
