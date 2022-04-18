@@ -3,6 +3,7 @@ package com.womakerscode.meetup.service;
 import com.womakerscode.meetup.model.RegistrationRequest;
 import com.womakerscode.meetup.model.entity.Event;
 import com.womakerscode.meetup.model.entity.Registration;
+import com.womakerscode.meetup.model.entity.Status;
 import com.womakerscode.meetup.model.entity.User;
 import com.womakerscode.meetup.repository.EventRepository;
 import com.womakerscode.meetup.repository.RegistrationRepository;
@@ -62,7 +63,7 @@ public class RegistrationServiceTest {
                 .build();
 
         User user = User.builder().build();
-        Event event = Event.builder().build();
+        Event event = Event.builder().status(Status.CREATED).maximunSpots(10).alocatedSpots(0).build();
         //execução
 
         when(eventRepository.findById(any())).thenReturn(Optional.of(event));

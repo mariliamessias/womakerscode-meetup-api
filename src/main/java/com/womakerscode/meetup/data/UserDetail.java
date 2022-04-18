@@ -1,6 +1,5 @@
 package com.womakerscode.meetup.data;
 
-import com.womakerscode.meetup.model.UserRequest;
 import com.womakerscode.meetup.model.entity.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
