@@ -20,7 +20,7 @@ public class UserController {
     private UserService userService;
 
     @PostMapping
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.CREATED)
     public UserResponse create(@RequestBody UserRequest userRequest) {
         return userService.save(userRequest).toUserResponse();
     }
