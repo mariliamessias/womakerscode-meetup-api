@@ -2,6 +2,7 @@ package com.womakerscode.meetup.handlers;
 
 import com.womakerscode.meetup.exceptions.GenericErrorsException;
 import com.womakerscode.meetup.exceptions.BusinessException;
+import com.womakerscode.meetup.exceptions.NotAllowedException;
 import com.womakerscode.meetup.exceptions.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,6 +35,11 @@ public class ExceptionsHandler {
         return new GenericErrorsException(e);
     }
 
+    @ExceptionHandler(NotAllowedException.class)
+    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
+    public GenericErrorsException handleNotAllowedException(NotAllowedException e) {
+        return new GenericErrorsException(e);
+    }
 
     @ExceptionHandler(ResponseStatusException.class)
     @ResponseStatus

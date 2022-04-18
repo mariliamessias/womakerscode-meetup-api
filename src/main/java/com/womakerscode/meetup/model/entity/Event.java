@@ -8,6 +8,10 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Data
 @AllArgsConstructor
@@ -36,14 +40,20 @@ public class Event {
     @Column
     private Integer alocatedSpots;
 
+    @OneToMany(mappedBy = "event")
+    private List<Registration> registrations = new ArrayList<>();
+
     public EventResponse toEventResponse() {
-       return EventResponse.builder()
-               .name(name)
-               .id(id)
-               .status(status)
-               .maximunSpots(maximunSpots)
-               .alocatedSpots(alocatedSpots)
-               .createdAt(createdAt)
-               .build();
+        return EventResponse.builder()
+                .name(name)
+                .id(id)
+                .status(status)
+                .registrations(Optional.ofNullable(registrations)
+                        .map(response -> response.stream().map(Registration::toRegistrationResponse).collect(Collectors.toList()))
+                        .orElse(new ArrayList<>()))
+                .maximunSpots(maximunSpots)
+                .alocatedSpots(alocatedSpots)
+                .createdAt(createdAt)
+                .build();
     }
 }

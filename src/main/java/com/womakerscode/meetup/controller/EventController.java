@@ -31,7 +31,7 @@ public class EventController {
         return eventService
                 .getEventById(id)
                 .map(Event::toEventResponse)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Event id: "+ id + " Not Found"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Event id: " + id + " Not Found"));
     }
 
     @DeleteMapping("{id}")
@@ -44,6 +44,13 @@ public class EventController {
     @ResponseStatus(HttpStatus.OK)
     public EventResponse update(@PathVariable Long id, @RequestBody @Valid EventRequest request) {
         return eventService.update(request, id)
+                .toEventResponse();
+    }
+
+    @PutMapping("{id}/cancel")
+    @ResponseStatus(HttpStatus.OK)
+    public EventResponse cance(@PathVariable Long id) {
+        return eventService.cancel(id)
                 .toEventResponse();
     }
 

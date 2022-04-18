@@ -21,6 +21,10 @@ public class GenericErrorsException {
         this.errors = Arrays.asList(e.getMessage());
     }
 
+    public GenericErrorsException(NotAllowedException e) {
+        this.errors = Arrays.asList(e.getMessage());
+    }
+
     public GenericErrorsException(ResourceNotFoundException e) {
         this.errors = Arrays.asList(e.getMessage());
     }

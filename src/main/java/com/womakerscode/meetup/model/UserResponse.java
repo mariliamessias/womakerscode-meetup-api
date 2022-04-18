@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -14,9 +15,13 @@ import java.time.LocalDateTime;
 @Builder
 public class UserResponse {
 
+    private Long id;
+
     private String userName;
 
     private LocalDateTime createdAt;
 
     private Role role;
+
+    private List<RegistrationResponse> registrations;
 }

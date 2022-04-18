@@ -22,4 +22,8 @@ public class RegistrationResponse {
 
     private LocalDateTime createdAt;
 
+    private String userName;
+
+    private String eventName;
+
 }

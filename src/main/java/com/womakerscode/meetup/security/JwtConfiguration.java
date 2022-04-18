@@ -15,12 +15,12 @@ public class JwtConfiguration extends WebSecurityConfigurerAdapter {
 
     private final UserDetailServiceImpl userDetailService;
     private final PasswordEncoder passwordEncoder;
-    private final Properties configUtil;
+    private final Properties properties;
 
-    public JwtConfiguration(UserDetailServiceImpl userDetailService, PasswordEncoder passwordEncoder, Properties configUtil) {
+    public JwtConfiguration(UserDetailServiceImpl userDetailService, PasswordEncoder passwordEncoder, Properties properties) {
         this.userDetailService = userDetailService;
         this.passwordEncoder = passwordEncoder;
-        this.configUtil = configUtil;
+        this.properties = properties;
     }
 
     @Override
@@ -34,8 +34,8 @@ public class JwtConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST, "/login", "/user", "/person").permitAll()
                 .anyRequest().authenticated()
                 .and()
-                .addFilter(new JwtFilterAuthentication(authenticationManager(), configUtil))
-                .addFilter(new JwtFilterValidate(authenticationManager()))
+                .addFilter(new JwtFilterAuthentication(authenticationManager(), properties))
+                .addFilter(new JwtFilterValidate(authenticationManager(), properties))
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }
 

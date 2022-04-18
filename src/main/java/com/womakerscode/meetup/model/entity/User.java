@@ -7,8 +7,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -38,12 +41,19 @@ public class User {
     @JoinColumn(name = "person_id", referencedColumnName = "id")
     private Person person;
 
+    @OneToMany(mappedBy = "user")
+    private List<Registration> registrations = new ArrayList<>();
+
     public UserResponse toUserResponse() {
-       return UserResponse.builder()
-               .createdAt(createdAt)
-               .userName(userName)
-               .role(role)
-               .build();
+        return UserResponse.builder()
+                .createdAt(createdAt)
+                .userName(userName)
+                .registrations(Optional.ofNullable(registrations)
+                        .map(response -> response.stream().map(Registration::toRegistrationResponse).collect(Collectors.toList()))
+                        .orElse(new ArrayList<>()))
+                .role(role)
+                .id(id)
+                .build();
     }
 
 

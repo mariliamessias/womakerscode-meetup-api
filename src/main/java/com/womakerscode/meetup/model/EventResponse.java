@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -25,4 +26,6 @@ public class EventResponse {
     private Integer maximunSpots;
 
     private Integer alocatedSpots;
+
+    private List<RegistrationResponse> registrations;
 }

@@ -28,11 +28,11 @@ public class Registration {
     @Column
     private String description;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "event_id", referencedColumnName = "id")
     private Event event;
 
@@ -45,6 +45,8 @@ public class Registration {
                 .createdAt(createdAt)
                 .id(id)
                 .status(status)
+                .eventName(event.getName())
+                .userName(user.getUserName())
                 .build();
     }
 

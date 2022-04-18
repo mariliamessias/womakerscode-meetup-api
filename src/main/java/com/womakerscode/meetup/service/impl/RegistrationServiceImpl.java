@@ -6,6 +6,7 @@ import com.womakerscode.meetup.exceptions.ResourceNotFoundException;
 import com.womakerscode.meetup.model.RegistrationRequest;
 import com.womakerscode.meetup.model.entity.Event;
 import com.womakerscode.meetup.model.entity.Registration;
+import com.womakerscode.meetup.model.entity.Status;
 import com.womakerscode.meetup.model.entity.User;
 import com.womakerscode.meetup.repository.EventRepository;
 import com.womakerscode.meetup.repository.RegistrationRepository;
@@ -36,14 +37,18 @@ public class RegistrationServiceImpl implements RegistrationService {
     @Override
     public Registration save(RegistrationRequest registrationRequest) {
 
-        Event event = findEvent(registrationRequest.getEventId());
-        User user = findUser(registrationRequest.getUserId());
-
         if (repository.existsByUserIdAndEventId(registrationRequest.getUserId(), registrationRequest.getEventId())) {
             throw new BusinessException("Registration already created");
         }
 
+        Event event = findEvent(registrationRequest.getEventId());
+        User user = findUser(registrationRequest.getUserId());
         event.setAlocatedSpots(event.getAlocatedSpots() + 1);
+
+        if (event.getMaximunSpots() <= (event.getAlocatedSpots())) {
+            event.setStatus(Status.FULL);
+        }
+
         eventRepository.save(event);
         return repository.save(registrationRequest.toSaveRegistration(user, event));
     }
@@ -52,8 +57,12 @@ public class RegistrationServiceImpl implements RegistrationService {
         Event event = eventRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Event id: " + id + " not found"));
 
-        if (event.getAlocatedSpots() < event.getAlocatedSpots()) {
+        if (event.getStatus().equals(Status.FULL) || event.getMaximunSpots() <= (event.getAlocatedSpots())) {
             throw new NotAllowedException("Event id: " + id + " is not empty.");
+        }
+
+        if (event.getStatus().equals(Status.CANCELED)) {
+            throw new NotAllowedException("Event id: " + id + " is already canceled");
         }
 
         return event;

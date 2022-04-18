@@ -3,7 +3,6 @@ package com.womakerscode.meetup.security;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.womakerscode.meetup.configs.Properties;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,11 +20,11 @@ public class JwtFilterValidate extends BasicAuthenticationFilter {
     public static final String HEADER_ATTRIBUTE = "Authorization";
     public static final String HEADER_PREFIX = "Bearer ";
 
-    @Autowired
-    private Properties properties;
+    private final Properties properties;
 
-    public JwtFilterValidate(AuthenticationManager authenticationManager) {
+    public JwtFilterValidate(AuthenticationManager authenticationManager, Properties properties) {
         super(authenticationManager);
+        this.properties = properties;
     }
 
     @Override
