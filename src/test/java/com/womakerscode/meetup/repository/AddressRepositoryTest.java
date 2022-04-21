@@ -19,7 +19,7 @@ import java.util.Optional;
 @ExtendWith({DBUnitExtension.class, SpringExtension.class})
 @SpringBootTest
 @ActiveProfiles("test")
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class AddressRepositoryTest {
 
     @Autowired
@@ -34,7 +34,7 @@ public class AddressRepositoryTest {
 
     @Test
     @DisplayName("Should save Address with success from repository")
-    public void testSaveSuccess() {
+    public void testSave() {
 
         Address addresExpected = Address.builder()
                 .id(1L)

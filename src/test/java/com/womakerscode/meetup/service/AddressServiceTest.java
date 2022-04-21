@@ -50,8 +50,8 @@ public class AddressServiceTest {
     }
 
     @Test
-    @DisplayName("Should find an address")
-    public void fidAddress() {
+    @DisplayName("Should get an address by Id")
+    public void getAddressById() {
         LocalDateTime creationDate = LocalDateTime.now();
         Long id = 1L;
         //cenario

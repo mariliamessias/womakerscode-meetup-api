@@ -78,6 +78,23 @@ public class PersonServiceTest {
         assertThat(savedPerson.getCreatedAt()).isEqualTo(creationDate);
     }
 
+    @Test
+    @DisplayName("Should get a person by Id")
+    public void getPersonByIdTest() {
+        long id = 1L;
+        LocalDateTime creationDate = LocalDateTime.now();
+        //execução
+        when(repository.findById(eq(1L))).thenReturn(Optional.of(buildPerson(creationDate)));
+
+        Optional<Person> savedPerson = personService.getPersonById(id);
+
+        //assert
+        assertThat(savedPerson.get().getName()).isEqualTo("name");
+        assertThat(savedPerson.get().getBirthDate()).isEqualTo(LocalDate.now());
+        assertThat(savedPerson.get().getEmail()).isEqualTo("email");
+        assertThat(savedPerson.get().getCreatedAt()).isEqualTo(creationDate);
+    }
+
     private Person buildPerson(LocalDateTime creationDate) {
         return Person.builder()
                 .createdAt(creationDate)

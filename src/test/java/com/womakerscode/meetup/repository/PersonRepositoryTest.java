@@ -15,11 +15,12 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import javax.sql.DataSource;
 import java.time.LocalDate;
+import java.util.Optional;
 
 @ExtendWith({DBUnitExtension.class, SpringExtension.class})
 @SpringBootTest
 @ActiveProfiles("test")
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class PersonRepositoryTest {
 
     @Autowired
@@ -34,7 +35,7 @@ public class PersonRepositoryTest {
 
     @Test
     @DisplayName("Should save Person with success from repository")
-    public void testSaveSuccess() {
+    public void testSave() {
 
         Person personExpected = Person.builder()
                 .id(1L)
@@ -58,5 +59,34 @@ public class PersonRepositoryTest {
         Assertions.assertEquals(personSaved.getEmail(), personExpected.getEmail(), "Person email must be the same");
         Assertions.assertEquals(personSaved.getName(), personExpected.getName(), "Person name must be the same");
         Assertions.assertEquals(personSaved.getBirthDate(), personExpected.getBirthDate(), "Person BirthDate must be the same");
+    }
+
+    @Test
+    @DisplayName("Should get Person by id with success from repository")
+    public void testFindPersonById() {
+        long id = 1L;
+        Person personExpected = Person.builder()
+                .id(1L)
+                .name("name")
+                .email("email.com")
+                .birthDate(LocalDate.now())
+                .build();
+
+        Person person = Person.builder()
+                .name("name")
+                .email("email.com")
+                .birthDate(LocalDate.now())
+                .build();
+
+        repository.save(person);
+        //execucao
+        Optional<Person> personSaved = repository.findById(id);
+
+        // assert
+        Assertions.assertNotNull(personSaved, "Person should not be null");
+        Assertions.assertEquals(personSaved.get().getId(), personExpected.getId(), "Person id must be the same");
+        Assertions.assertEquals(personSaved.get().getEmail(), personExpected.getEmail(), "Person email must be the same");
+        Assertions.assertEquals(personSaved.get().getName(), personExpected.getName(), "Person name must be the same");
+        Assertions.assertEquals(personSaved.get().getBirthDate(), personExpected.getBirthDate(), "Person BirthDate must be the same");
     }
 }

@@ -20,7 +20,7 @@ import java.time.LocalDateTime;
 @ExtendWith({DBUnitExtension.class, SpringExtension.class})
 @SpringBootTest
 @ActiveProfiles("test")
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class RegistrationRepositoryTest {
 
     @Autowired
@@ -41,7 +41,7 @@ public class RegistrationRepositoryTest {
 
     @Test
     @DisplayName("Should save Registration with success from repository")
-    public void testSaveSuccess() {
+    public void testSave() {
 
         Registration registrationExpected = Registration.builder()
                 .id(1L)
@@ -68,7 +68,7 @@ public class RegistrationRepositoryTest {
 
     @Test
     @DisplayName("Should delete Registration with success from repository")
-    public void testDeleteSuccess() {
+    public void testDeleteRegistrationById() {
         Registration registration = Registration.builder()
                 .description("teste")
                 .status(Status.CREATED)
@@ -114,7 +114,7 @@ public class RegistrationRepositoryTest {
 
         // assert
         Assertions.assertNotNull(registrationSaved, "Registration should not be null");
-        Assertions.assertEquals(registrationSaved.getId(), 4L, "Registrations id must be the same");
+        Assertions.assertEquals(registrationSaved.getId(), 1L, "Registrations id must be the same");
         Assertions.assertEquals(registrationSaved.getStatus(), Status.CREATED, "Registrations status must be the same");
         Assertions.assertEquals(registrationSaved.getDescription(), "test", "Registrations description must be the same");
 
