@@ -43,15 +43,13 @@ public class EventController {
     @PutMapping("{id}")
     @ResponseStatus(HttpStatus.OK)
     public EventResponse update(@PathVariable Long id, @RequestBody @Valid EventRequest request) {
-        return eventService.update(request, id)
-                .toEventResponse();
+        return eventService.update(request, id).toEventResponse();
     }
 
     @PutMapping("{id}/cancel")
     @ResponseStatus(HttpStatus.OK)
-    public EventResponse cance(@PathVariable Long id) {
-        return eventService.cancel(id)
-                .toEventResponse();
+    public EventResponse cancel(@PathVariable Long id) {
+        return eventService.cancel(id).toEventResponse();
     }
 
 }

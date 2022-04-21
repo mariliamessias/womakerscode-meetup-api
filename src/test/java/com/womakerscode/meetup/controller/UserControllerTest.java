@@ -6,6 +6,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.womakerscode.meetup.configs.Properties;
 import com.womakerscode.meetup.data.UserDetail;
 import com.womakerscode.meetup.model.UserRequest;
+import com.womakerscode.meetup.model.entity.Event;
+import com.womakerscode.meetup.model.entity.Registration;
 import com.womakerscode.meetup.model.entity.User;
 import com.womakerscode.meetup.service.UserService;
 import com.womakerscode.meetup.service.impl.UserDetailServiceImpl;
@@ -25,11 +27,13 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.Optional;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
+import static com.womakerscode.meetup.model.entity.Status.ACTIVE;
+import static org.mockito.ArgumentMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(SpringExtension.class)
@@ -61,7 +65,7 @@ public class UserControllerTest {
     public static final int TOKEN_EXPIRATION = 600_000;
 
     @Test
-    @DisplayName("Should create an event with success")
+    @DisplayName("Should create an user with success")
     public void createEventTest() throws Exception {
 
         //cenário
@@ -70,12 +74,8 @@ public class UserControllerTest {
                 .userName("test username")
                 .password("1234")
                 .build();
-
-        UserDetail userDetail = new UserDetail(Optional.of(User.builder().userName("test").build()));
         // execução
         BDDMockito.given(userService.save(any(UserRequest.class))).willReturn(user);
-
-        BDDMockito.given(userDetailService.loadUserByUsername(anyString())).willReturn(userDetail);
 
         String json = objectMapper.writeValueAsString(userRequest);
 
@@ -89,6 +89,58 @@ public class UserControllerTest {
         mockMvc
                 .perform(request)
                 .andExpect(status().isCreated());
+
+    }
+
+    @Test
+    @DisplayName("Should get a list of registrations by userId with success")
+    public void getRegistrationsByUserIdEventTest() throws Exception {
+        long id = 1L;
+        //cenário
+        Registration registration = Registration.builder()
+                .id(id)
+                .description("description")
+                .status(ACTIVE)
+                .event(Event.builder().name("event name").build())
+                .user(User.builder().userName("test").build())
+                .build();
+
+        UserDetail userDetail = new UserDetail(Optional.of(User.builder().userName("test").build()));
+
+        // execução
+        BDDMockito.given(userService.findRegistrationsByUserId(eq(id))).willReturn(Collections.singletonList(registration));
+        BDDMockito.given(userDetailService.loadUserByUsername(anyString())).willReturn(userDetail);
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .get(USER_API.concat("/" + id + "/registration"))
+                .accept(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer " + buildToken(userDetail));
+
+        // asserts
+        mockMvc
+                .perform(request)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id").value(1))
+                .andExpect(jsonPath("$[0].event_name").value("event name"))
+                .andExpect(jsonPath("$[0].user_name").value("test"))
+                .andExpect(jsonPath("$[0].description").value("description"))
+                .andExpect(jsonPath("$[0].status").value("ACTIVE"));
+
+    }
+
+    @Test
+    @DisplayName("Should not get a list of registrations when has not Authorization token")
+    public void forbiddenErrorGetRegistrationsByUserIdEventTest() throws Exception {
+        long id = 1L;
+        // execução
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .get(USER_API.concat("/" + id + "/registration"))
+                .accept(MediaType.APPLICATION_JSON);
+
+        // asserts
+        mockMvc
+                .perform(request)
+                .andExpect(status().isForbidden());
 
     }
 

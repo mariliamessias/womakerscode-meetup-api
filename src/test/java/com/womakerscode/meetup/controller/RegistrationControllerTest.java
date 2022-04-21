@@ -111,6 +111,40 @@ public class RegistrationControllerTest {
     }
 
     @Test
+    @DisplayName("Should not create a registration when has not Authorization token")
+    public void forbiddenErrorCreateRegistrationTest() throws Exception {
+
+        //cenário
+        RegistrationRequest registrationRequestBuilder = createNewRegistration();
+        Registration savedRegistration = Registration.builder()
+                .status(ACTIVE)
+                .description("test")
+                .event(Event.builder().name("event name").build())
+                .user(User.builder().userName("test").build())
+                .build();
+
+        UserDetail userDetail = new UserDetail(Optional.of(User.builder().userName("test").build()));
+        // execução
+        BDDMockito.given(registrationService.save(any(RegistrationRequest.class))).willReturn(savedRegistration);
+
+        BDDMockito.given(userDetailService.loadUserByUsername(anyString())).willReturn(userDetail);
+
+        String json = objectMapper.writeValueAsString(registrationRequestBuilder);
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .post(REGISTRATION_API)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(json);
+
+        // asserts
+        mockMvc
+                .perform(request)
+                .andExpect(status().isForbidden());
+
+    }
+
+    @Test
     @DisplayName("Should throw an exception when not have date enough for the test.")
     public void createInvalidRegistrationTest() throws Exception {
 
@@ -186,6 +220,31 @@ public class RegistrationControllerTest {
     }
 
     @Test
+    @DisplayName("Should not get a registration when has not Authorization token")
+    public void forbiddenErrorGetRegistrationTest() throws Exception {
+
+        Long id = 11L;
+
+        Registration registration = Registration.builder()
+                .id(id)
+                .description(createNewRegistration().getDescription())
+                .status(ACTIVE)
+                .event(Event.builder().name("event name").build())
+                .user(User.builder().userName("test").build())
+                .build();
+
+        BDDMockito.given(registrationService.getRegistrationById(id)).willReturn(Optional.of(registration));
+
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
+                .get(REGISTRATION_API.concat("/" + id))
+                .accept(MediaType.APPLICATION_JSON);
+
+        mockMvc.perform(requestBuilder)
+                .andExpect(status().isForbidden());
+
+    }
+
+    @Test
     @DisplayName("Should return NOT FOUND when the registration doesn't exists")
     public void registrationNotFoundTest() throws Exception {
 
@@ -202,7 +261,6 @@ public class RegistrationControllerTest {
                 .andExpect(status().isNotFound());
     }
 
-
     @Test
     @DisplayName("Should delete the registration")
     public void deleteRegistration() throws Exception {
@@ -216,6 +274,18 @@ public class RegistrationControllerTest {
 
         mockMvc.perform(requestBuilder)
                 .andExpect(status().isNoContent());
+    }
+
+    @Test
+    @DisplayName("Should not delete a registration when has not Authorization token")
+    public void forbiddenErrorDeleteRegistration() throws Exception {
+
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
+                .delete(REGISTRATION_API.concat("/" + 1))
+                .accept(MediaType.APPLICATION_JSON);
+
+        mockMvc.perform(requestBuilder)
+                .andExpect(status().isForbidden());
     }
 
     @Test
@@ -276,6 +346,42 @@ public class RegistrationControllerTest {
     }
 
     @Test
+    @DisplayName("Should not update a registration when has not Authorization token")
+    public void forbiddenErrorUpdateRegistrationTest() throws Exception {
+
+        Long id = 11L;
+        UserDetail userDetail = new UserDetail(Optional.of(User.builder().userName("test").build()));
+
+        RegistrationRequest request = createNewRegistration();
+        request.setStatus(CANCELED);
+
+        String json = new ObjectMapper().writeValueAsString(request);
+
+        Registration updatedRegistration =
+                Registration.builder()
+                        .id(id)
+                        .description("test")
+                        .status(CANCELED)
+                        .event(Event.builder().name("event name").build())
+                        .user(User.builder().userName("test").build())
+                        .build();
+
+        BDDMockito.given(registrationService
+                .update(any(RegistrationRequest.class), eq(id)))
+                .willReturn(updatedRegistration);
+
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
+                .put(REGISTRATION_API.concat("/" + id))
+                .content(json)
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON);
+
+        mockMvc.perform(requestBuilder)
+                .andExpect(status().isForbidden());
+
+    }
+
+    @Test
     @DisplayName("Should return 404 when try to update an registration no existent")
     public void updateNonExistentRegistrationTest() throws Exception {
 
@@ -303,7 +409,7 @@ public class RegistrationControllerTest {
 
         Long id = 11L;
 
-        Registration registration =  Registration.builder()
+        Registration registration = Registration.builder()
                 .id(id)
                 .description("test")
                 .status(ACTIVE)
@@ -331,6 +437,38 @@ public class RegistrationControllerTest {
                 .andExpect(jsonPath("totalElements").value(1))
                 .andExpect(jsonPath("pageable.pageSize").value(100))
                 .andExpect(jsonPath("pageable.pageNumber").value(0));
+
+    }
+
+    @Test
+    @DisplayName("Should not fail by filter a registration when has not Authorization token")
+    public void forbiddenErrorFindRegistrationTest() throws Exception {
+
+        Long id = 11L;
+
+        Registration registration = Registration.builder()
+                .id(id)
+                .description("test")
+                .status(ACTIVE)
+                .event(Event.builder().name("event name").build())
+                .user(User.builder().userName("test").build())
+                .build();
+
+        UserDetail userDetail = new UserDetail(Optional.of(User.builder().userName("test").build()));
+
+
+        BDDMockito.given(registrationService.find(Mockito.any(Registration.class), Mockito.any(Pageable.class)))
+                .willReturn(new PageImpl<Registration>(Arrays.asList(registration), PageRequest.of(0, 100), 1));
+
+        String queryString = "?page=0&size=100";
+
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
+                .get(REGISTRATION_API.concat(queryString))
+                .accept(MediaType.APPLICATION_JSON);
+
+        mockMvc
+                .perform(requestBuilder)
+                .andExpect(status().isForbidden());
 
     }
 

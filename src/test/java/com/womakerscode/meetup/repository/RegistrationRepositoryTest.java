@@ -75,7 +75,7 @@ public class RegistrationRepositoryTest {
                 .createdAt(LocalDateTime.now())
                 .build();
 
-        Registration registrationSaved = repository.save(registration);
+        repository.save(registration);
         //execucao
         Integer RegistrationsResult = repository.deleteRegistrationById(1L);
 

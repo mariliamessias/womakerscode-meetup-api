@@ -34,10 +34,10 @@ public class Event {
     @Column
     private Status status;
 
-    @Column
+    @Column(name = "maximun_spots")
     private Integer maximunSpots;
 
-    @Column
+    @Column(name = "alocated_spots")
     private Integer alocatedSpots;
 
     @OneToMany(mappedBy = "event")

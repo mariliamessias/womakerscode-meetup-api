@@ -1,5 +1,6 @@
 package com.womakerscode.meetup.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.womakerscode.meetup.model.entity.Status;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,12 +20,15 @@ public class EventResponse {
 
     private String name;
 
+    @JsonProperty("created_at")
     private LocalDateTime createdAt;
 
     private Status status;
 
+    @JsonProperty("maximun_spots")
     private Integer maximunSpots;
 
+    @JsonProperty("alocated_spots")
     private Integer alocatedSpots;
 
     private List<RegistrationResponse> registrations;

@@ -1,5 +1,6 @@
 package com.womakerscode.meetup.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -21,10 +22,12 @@ public class PersonResponse {
 
     private String name;
 
+    @JsonProperty("birth_date")
     private LocalDate birthDate;
 
     private String email;
 
+    @JsonProperty("created_at")
     private LocalDateTime createdAt;
 
     private AddressResponse address;
