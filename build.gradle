@@ -28,6 +28,11 @@ dependencies {
     implementation 'io.springfox:springfox-boot-starter:3.0.0'
     implementation 'com.auth0:java-jwt:3.19.1'
 
+    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client:3.1.1'
+    implementation 'org.springframework.cloud:spring-cloud-config-client:3.1.1'
+    implementation 'org.springframework.cloud:spring-cloud-starter-bootstrap:3.1.1'
+
+
     annotationProcessor 'org.projectlombok:lombok'
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'com.h2database:h2'
