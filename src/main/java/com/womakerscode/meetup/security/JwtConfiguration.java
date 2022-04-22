@@ -13,6 +13,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @EnableWebSecurity
 public class JwtConfiguration extends WebSecurityConfigurerAdapter {
 
+    private static final String[] AUTH_WHITELIST = {
+            "/authenticate",
+            "/swagger-resources/**",
+            "/swagger-ui/**",
+            "/v3/api-docs",
+            "/webjars/**"
+    };
+
     private final UserDetailServiceImpl userDetailService;
     private final PasswordEncoder passwordEncoder;
     private final Properties properties;
@@ -30,8 +38,12 @@ public class JwtConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable().authorizeRequests()
+
+        http.csrf()
+                .disable().authorizeRequests()
                 .antMatchers(HttpMethod.POST, "/login", "/user").permitAll()
+                .and()
+                .authorizeRequests().antMatchers(AUTH_WHITELIST).permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .addFilter(new JwtFilterAuthentication(authenticationManager(), properties))
