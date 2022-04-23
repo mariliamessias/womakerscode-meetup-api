@@ -7,7 +7,7 @@ import org.springframework.core.env.Environment;
 
 
 @Configuration
-@PropertySource("classpath:local.properties")
+@PropertySource("classpath:application.properties")
 public class Properties {
 
     @Autowired
