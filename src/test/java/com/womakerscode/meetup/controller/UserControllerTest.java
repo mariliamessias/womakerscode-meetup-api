@@ -1,12 +1,16 @@
 package com.womakerscode.meetup.controller;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.womakerscode.meetup.configs.Properties;
+import com.womakerscode.meetup.data.UserDetail;
 import com.womakerscode.meetup.model.UserRequest;
 import com.womakerscode.meetup.model.entity.Event;
 import com.womakerscode.meetup.model.entity.Registration;
 import com.womakerscode.meetup.model.entity.User;
 import com.womakerscode.meetup.service.UserService;
+import com.womakerscode.meetup.service.impl.UserDetailServiceImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,10 +28,11 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.Collections;
+import java.util.Date;
+import java.util.Optional;
 
 import static com.womakerscode.meetup.model.entity.Status.ACTIVE;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -44,6 +49,9 @@ public class UserControllerTest {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @MockBean
+    private UserDetailServiceImpl userDetailService;
 
     @MockBean
     private PasswordEncoder passwordEncoder;
@@ -97,13 +105,16 @@ public class UserControllerTest {
                 .user(User.builder().userName("test").build())
                 .build();
 
+        UserDetail userDetail = new UserDetail(Optional.of(User.builder().userName("test").build()));
 
         // execução
         BDDMockito.given(userService.findRegistrationsByUserId(eq(id))).willReturn(Collections.singletonList(registration));
+        BDDMockito.given(userDetailService.loadUserByUsername(anyString())).willReturn(userDetail);
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
                 .get(USER_API.concat("/" + id + "/registration"))
-                .accept(MediaType.APPLICATION_JSON);
+                .accept(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer " + buildToken(userDetail));
 
         // asserts
         mockMvc
@@ -117,10 +128,36 @@ public class UserControllerTest {
 
     }
 
+    @Test
+    @DisplayName("Should not get a list of registrations when has not Authorization token")
+    public void forbiddenErrorGetRegistrationsByUserIdEventTest() throws Exception {
+        long id = 1L;
+        // execução
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .get(USER_API.concat("/" + id + "/registration"))
+                .accept(MediaType.APPLICATION_JSON);
+
+        // asserts
+        mockMvc
+                .perform(request)
+                .andExpect(status().isForbidden());
+
+    }
+
     private UserRequest createNewUser() {
         return UserRequest.builder()
                 .userName("test username")
                 .password("1234")
                 .build();
+    }
+
+    private String buildToken(UserDetail userDetail) {
+
+        BDDMockito.given(properties.getProperty(anyString())).willReturn("9ebf2b42-3a5a-4193-ac50-73ea5547af27");
+
+        return JWT.create()
+                .withSubject(userDetail.getUsername())
+                .withExpiresAt(new Date(System.currentTimeMillis() + TOKEN_EXPIRATION))
+                .sign(Algorithm.HMAC512(properties.getProperty("token.password")));
     }
 }
