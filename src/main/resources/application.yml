@@ -6,14 +6,14 @@ spring:
   security:
     oauth2:
       resource:
-        token-info-uri: https://womakerscode-auth-api.azurewebsites.net/oauth/check_token
+        token-info-uri: ${OAUTH_TOKEN_URI}
       client:
-        client-id: web
-        client-secret: pin
+        client-id: ${CLIENT_ID_MEETUP}
+        client-secret: ${CLIENT_ID_MEETUP_SECRET}
   datasource:
-    url: jdbc:mysql://womakersmeetupdb.mysql.database.azure.com:3306/meetupdb?serverTimezone=UTC
-    username: spring@womakersmeetupdb
-    password: womakers2022!
+    url: ${DATASOURCE_URL_MEETUP}
+    username: ${DATASOURCE_USERNAME_MEETUP}
+    password: ${DATASOURCE_PASSWORD_MEETUP}
     driver-class-name: com.mysql.jdbc.Driver
     initialization-mode: always
   jpa:

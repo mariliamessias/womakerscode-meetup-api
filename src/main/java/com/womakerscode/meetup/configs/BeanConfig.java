@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -14,6 +15,15 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 public class BeanConfig {
+
+    @Value( "${spring.security.oauth2.resource.token-info-uri}" )
+    private String tokenUrl;
+
+    @Value( "${spring.security.oauth2.client.client-id}" )
+    private String clientId;
+
+    @Value( "${spring.security.oauth2.client.client-secret}" )
+    private String clientSecret;
 
     @Bean
     public ObjectMapper objectMapper() {
@@ -37,10 +47,9 @@ public class BeanConfig {
     @Bean
     public RemoteTokenServices tokenService() {
         RemoteTokenServices tokenService = new RemoteTokenServices();
-        tokenService.setCheckTokenEndpointUrl(
-                "https://womakerscode-auth-api.azurewebsites.net/oauth/check_token");
-        tokenService.setClientId("web");
-        tokenService.setClientSecret("pin");
+        tokenService.setCheckTokenEndpointUrl(tokenUrl);
+        tokenService.setClientId(clientId);
+        tokenService.setClientSecret(clientSecret);
         return tokenService;
     }
 
