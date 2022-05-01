@@ -39,9 +39,8 @@ public class Person {
     @JoinColumn(name = "address_id", referencedColumnName = "id")
     private Address address;
 
-    @OneToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
-    private User user;
+    @Column(name = "user_name")
+    private String username;
 
     public PersonResponse toPersonResponse() {
         return PersonResponse.builder()

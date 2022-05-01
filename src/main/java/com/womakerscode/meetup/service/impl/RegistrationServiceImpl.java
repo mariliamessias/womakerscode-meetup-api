@@ -7,10 +7,8 @@ import com.womakerscode.meetup.model.RegistrationRequest;
 import com.womakerscode.meetup.model.entity.Event;
 import com.womakerscode.meetup.model.entity.Registration;
 import com.womakerscode.meetup.model.entity.Status;
-import com.womakerscode.meetup.model.entity.User;
 import com.womakerscode.meetup.repository.EventRepository;
 import com.womakerscode.meetup.repository.RegistrationRepository;
-import com.womakerscode.meetup.repository.UserRepository;
 import com.womakerscode.meetup.service.RegistrationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
@@ -30,19 +28,14 @@ public class RegistrationServiceImpl implements RegistrationService {
     @Autowired
     EventRepository eventRepository;
 
-    @Autowired
-    UserRepository userRepository;
-
-
     @Override
     public Registration save(RegistrationRequest registrationRequest) {
 
-        if (repository.existsByUserIdAndEventId(registrationRequest.getUserId(), registrationRequest.getEventId())) {
+        if (repository.existsByUsernameAndEventId(registrationRequest.getUsername(), registrationRequest.getEventId())) {
             throw new BusinessException("Registration already created");
         }
 
         Event event = findEvent(registrationRequest.getEventId());
-        User user = findUser(registrationRequest.getUserId());
         event.setAlocatedSpots(event.getAlocatedSpots() + 1);
 
         if (event.getMaximunSpots() <= (event.getAlocatedSpots())) {
@@ -50,7 +43,7 @@ public class RegistrationServiceImpl implements RegistrationService {
         }
 
         eventRepository.save(event);
-        return repository.save(registrationRequest.toSaveRegistration(user, event));
+        return repository.save(registrationRequest.toSaveRegistration(event));
     }
 
     private Event findEvent(Long id) {
@@ -66,11 +59,6 @@ public class RegistrationServiceImpl implements RegistrationService {
         }
 
         return event;
-    }
-
-    private User findUser(Long id) {
-        return userRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("User id: " + id + " not found"));
     }
 
     @Override

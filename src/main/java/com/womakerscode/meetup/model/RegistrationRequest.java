@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.womakerscode.meetup.model.entity.Event;
 import com.womakerscode.meetup.model.entity.Registration;
 import com.womakerscode.meetup.model.entity.Status;
-import com.womakerscode.meetup.model.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -27,8 +26,8 @@ public class RegistrationRequest {
     private String description;
 
     @NotNull
-    @JsonProperty("user_id")
-    private Long userId;
+    @JsonProperty("user_name")
+    private String username;
 
     @NotNull
     @JsonProperty("event_id")
@@ -36,10 +35,10 @@ public class RegistrationRequest {
 
     private Status status;
 
-    public Registration toSaveRegistration(User user, Event event) {
+    public Registration toSaveRegistration(Event event) {
         return Registration.builder()
                 .status(CREATED)
-                .user(user)
+                .username(username)
                 .event(event)
                 .createdAt(LocalDateTime.now())
                 .description(description)

@@ -1,15 +1,9 @@
 package com.womakerscode.meetup.controller;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.womakerscode.meetup.configs.Properties;
-import com.womakerscode.meetup.data.UserDetail;
 import com.womakerscode.meetup.model.EventRequest;
 import com.womakerscode.meetup.model.entity.Event;
-import com.womakerscode.meetup.model.entity.User;
 import com.womakerscode.meetup.service.EventService;
-import com.womakerscode.meetup.service.impl.UserDetailServiceImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,19 +13,18 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import java.util.Date;
 import java.util.Optional;
 
 import static com.womakerscode.meetup.model.entity.Status.ACTIVE;
 import static com.womakerscode.meetup.model.entity.Status.CANCELED;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -48,15 +41,6 @@ public class EventControllerTest {
 
     @Autowired
     private ObjectMapper objectMapper;
-
-    @MockBean
-    private UserDetailServiceImpl userDetailService;
-
-    @MockBean
-    private PasswordEncoder passwordEncoder;
-
-    @MockBean
-    private Properties properties;
 
     @Autowired
     MockMvc mockMvc;
@@ -76,11 +60,8 @@ public class EventControllerTest {
                 .alocatedSpots(1)
                 .build();
 
-        UserDetail userDetail = new UserDetail(Optional.of(User.builder().userName("test").build()));
         // execução
         BDDMockito.given(eventService.save(any(EventRequest.class))).willReturn(event);
-
-        BDDMockito.given(userDetailService.loadUserByUsername(anyString())).willReturn(userDetail);
 
         String json = objectMapper.writeValueAsString(eventRequest);
 
@@ -88,7 +69,6 @@ public class EventControllerTest {
                 .post(EVENT_API)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer " + buildToken(userDetail))
                 .content(json);
 
         // asserts
@@ -106,16 +86,11 @@ public class EventControllerTest {
     @DisplayName("Should not create an event with success when payload is invalid")
     public void badRequestcreateEventTest() throws Exception {
 
-        //cenário
-        UserDetail userDetail = new UserDetail(Optional.of(User.builder().userName("test").build()));
         // execução
-        BDDMockito.given(userDetailService.loadUserByUsername(anyString())).willReturn(userDetail);
-
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
                 .post(EVENT_API)
                 .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer " + buildToken(userDetail));
+                .accept(MediaType.APPLICATION_JSON);
 
         // asserts
         mockMvc
@@ -161,17 +136,13 @@ public class EventControllerTest {
                 .name("test name")
                 .build();
 
-        UserDetail userDetail = new UserDetail(Optional.of(User.builder().userName("test").build()));
         // execução
         BDDMockito.given(eventService.getEventById(id)).willReturn(Optional.of(event));
-
-        BDDMockito.given(userDetailService.loadUserByUsername(anyString())).willReturn(userDetail);
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
                 .get(EVENT_API.concat("/" + id))
                 .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer " + buildToken(userDetail));
+                .accept(MediaType.APPLICATION_JSON);
 
         // asserts
         mockMvc
@@ -191,17 +162,12 @@ public class EventControllerTest {
 
         long id = 1L;
 
-        //cenário
-        UserDetail userDetail = new UserDetail(Optional.of(User.builder().userName("test").build()));
         // execução
         BDDMockito.given(eventService.getEventById(id)).willReturn(Optional.empty());
 
-        BDDMockito.given(userDetailService.loadUserByUsername(anyString())).willReturn(userDetail);
-
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
                 .get(EVENT_API.concat("/" + id))
-                .accept(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer " + buildToken(userDetail));
+                .accept(MediaType.APPLICATION_JSON);
 
         // asserts
         mockMvc
@@ -236,14 +202,10 @@ public class EventControllerTest {
         long id = 1L;
 
         //cenário
-        UserDetail userDetail = new UserDetail(Optional.of(User.builder().userName("test").build()));
         // execução
-        BDDMockito.given(userDetailService.loadUserByUsername(anyString())).willReturn(userDetail);
-
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
                 .delete(EVENT_API.concat("/" + id))
-                .accept(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer " + buildToken(userDetail));
+                .accept(MediaType.APPLICATION_JSON);
 
         // asserts
         mockMvc
@@ -284,18 +246,15 @@ public class EventControllerTest {
                 .name("test name")
                 .build();
 
-        UserDetail userDetail = new UserDetail(Optional.of(User.builder().userName("test").build()));
         String json = objectMapper.writeValueAsString(eventRequest);
 
         // execução
         BDDMockito.given(eventService.update(any(EventRequest.class), eq(id))).willReturn(event);
-        BDDMockito.given(userDetailService.loadUserByUsername(anyString())).willReturn(userDetail);
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
                 .put(EVENT_API.concat("/" + id))
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer " + buildToken(userDetail))
                 .content(json);
 
         // asserts
@@ -350,18 +309,15 @@ public class EventControllerTest {
                 .name("test name")
                 .build();
 
-        UserDetail userDetail = new UserDetail(Optional.of(User.builder().userName("test").build()));
         String json = objectMapper.writeValueAsString(eventRequest);
 
         // execução
         BDDMockito.given(eventService.cancel(eq(id))).willReturn(event);
-        BDDMockito.given(userDetailService.loadUserByUsername(anyString())).willReturn(userDetail);
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
                 .put(EVENT_API.concat("/" + id + "/cancel"))
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer " + buildToken(userDetail))
                 .content(json);
 
         // asserts
@@ -399,16 +355,6 @@ public class EventControllerTest {
                 .perform(request)
                 .andExpect(status().isForbidden());
 
-    }
-
-    private String buildToken(UserDetail userDetail) {
-
-        BDDMockito.given(properties.getProperty(anyString())).willReturn("9ebf2b42-3a5a-4193-ac50-73ea5547af27");
-
-        return JWT.create()
-                .withSubject(userDetail.getUsername())
-                .withExpiresAt(new Date(System.currentTimeMillis() + TOKEN_EXPIRATION))
-                .sign(Algorithm.HMAC512(properties.getProperty("token.password")));
     }
 
     private EventRequest createNewEvent() {

@@ -4,7 +4,6 @@ package com.womakerscode.meetup.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.womakerscode.meetup.model.entity.Address;
 import com.womakerscode.meetup.model.entity.Person;
-import com.womakerscode.meetup.model.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -39,15 +38,15 @@ public class PersonRequest {
     private AddressRequest address;
 
     @NotNull
-    private Long userId;
+    private String username;
 
-    public Person toSavePerson(Address address, User user) {
+    public Person toSavePerson(Address address) {
         return Person.builder()
                 .createdAt(LocalDateTime.now())
                 .email(email)
                 .name(name)
                 .address(address)
-                .user(user)
+                .username(username)
                 .birthDate(birthDate)
                 .build();
     }

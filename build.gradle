@@ -1,7 +1,13 @@
 plugins {
-    id 'org.springframework.boot' version '2.6.5'
+    id 'org.springframework.boot' version '2.3.0.RELEASE'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id 'java'
+    id "com.microsoft.azure.azurewebapp" version "1.2.0"
+}
+
+azurewebapp {
+    resourceGroup = 'azure-spring-womakerscode'
+    appName = 'womakerscode-meetup-api'
 }
 
 group = 'com.womakerscode'
@@ -22,20 +28,16 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.0'
-    implementation 'org.springframework.security:spring-security-core:5.6.2'
-    implementation 'org.springframework.boot:spring-boot-starter-security:2.6.6'
-    implementation 'io.springfox:springfox-boot-starter:3.0.0'
-    implementation 'com.auth0:java-jwt:3.19.1'
-    implementation 'mysql:mysql-connector-java:8.0.28'
+    implementation 'org.springframework.cloud:spring-cloud-starter-oauth2:2.2.5.RELEASE'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
 
-    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client:3.1.1'
-    implementation 'org.springframework.cloud:spring-cloud-config-client:3.1.1'
-    implementation 'org.springframework.cloud:spring-cloud-starter-bootstrap:3.1.1'
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.0'
+
+    implementation 'io.springfox:springfox-boot-starter:3.0.0'
+    implementation 'mysql:mysql-connector-java:8.0.28'
 
     annotationProcessor 'org.projectlombok:lombok'
     compileOnly 'org.projectlombok:lombok'
-    runtimeOnly 'com.h2database:h2'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'com.github.database-rider:rider-junit5:1.32.3'
