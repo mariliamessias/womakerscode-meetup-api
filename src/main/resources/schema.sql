@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS address (
     city VARCHAR(150) NOT NULL,
     country VARCHAR(100) NOT NULL,
     number INTEGER NOT NULL,
-    created_at DATE NOT NULL,
+    created_at DATETIME NOT NULL,
     PRIMARY KEY (id)
 );
 
@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS person (
     name VARCHAR(150) NOT NULL,
     birth_date DATE NOT NULL,
     email VARCHAR(150) NOT NULL,
-    created_at DATE NOT NULL,
+    created_at DATETIME NOT NULL,
     PRIMARY KEY (id),
     FOREIGN KEY (address_id) REFERENCES address(id)
 );
@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS event (
     status VARCHAR(150) NOT NULL,
     maximun_spots INTEGER NOT NULL,
     alocated_spots INTEGER NOT NULL,
-    created_at DATE NOT NULL,
+    created_at DATETIME NOT NULL,
     event_date DATE NOT NULL,
     PRIMARY KEY (id)
 );
@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS registration (
     event_id bigint NOT NULL,
     status VARCHAR(128) NOT NULL,
     description VARCHAR(100) NOT NULL,
-    created_at DATE NOT NULL,
+    created_at DATETIME NOT NULL,
     PRIMARY KEY (id),
     FOREIGN KEY (event_id) REFERENCES event(id)
 );
