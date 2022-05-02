@@ -59,7 +59,7 @@ public class RegistrationServiceImpl implements RegistrationService {
         Registration result = repository.save(registrationRequest.toSaveRegistration(event));
 
         publisherService.publish(SendEmaillMessage.builder()
-                .email(registrationRequest.getEmail())
+                .email(person.getEmail())
                 .eventName(event.getName())
                 .name(person.getName())
                 .type(REGISTRATION)
