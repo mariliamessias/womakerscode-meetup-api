@@ -4,13 +4,13 @@ import com.womakerscode.meetup.exceptions.BusinessException;
 import com.womakerscode.meetup.exceptions.NotAllowedException;
 import com.womakerscode.meetup.exceptions.ResourceNotFoundException;
 import com.womakerscode.meetup.model.RegistrationRequest;
+import com.womakerscode.meetup.model.SendEmaillMessage;
 import com.womakerscode.meetup.model.entity.Event;
 import com.womakerscode.meetup.model.entity.Registration;
 import com.womakerscode.meetup.model.entity.Status;
-import com.womakerscode.meetup.model.entity.User;
 import com.womakerscode.meetup.repository.EventRepository;
 import com.womakerscode.meetup.repository.RegistrationRepository;
-import com.womakerscode.meetup.repository.UserRepository;
+import com.womakerscode.meetup.service.PublisherService;
 import com.womakerscode.meetup.service.RegistrationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
@@ -24,6 +24,7 @@ import java.util.Optional;
 @Service
 public class RegistrationServiceImpl implements RegistrationService {
 
+    public static final String REGISTRATION = "REGISTRATION";
     @Autowired
     RegistrationRepository repository;
 
@@ -31,18 +32,16 @@ public class RegistrationServiceImpl implements RegistrationService {
     EventRepository eventRepository;
 
     @Autowired
-    UserRepository userRepository;
-
+    PublisherService publisherService;
 
     @Override
     public Registration save(RegistrationRequest registrationRequest) {
 
-        if (repository.existsByUserIdAndEventId(registrationRequest.getUserId(), registrationRequest.getEventId())) {
+        if (repository.existsByUsernameAndEventId(registrationRequest.getUsername(), registrationRequest.getEventId())) {
             throw new BusinessException("Registration already created");
         }
 
         Event event = findEvent(registrationRequest.getEventId());
-        User user = findUser(registrationRequest.getUserId());
         event.setAlocatedSpots(event.getAlocatedSpots() + 1);
 
         if (event.getMaximunSpots() <= (event.getAlocatedSpots())) {
@@ -50,7 +49,15 @@ public class RegistrationServiceImpl implements RegistrationService {
         }
 
         eventRepository.save(event);
-        return repository.save(registrationRequest.toSaveRegistration(user, event));
+        Registration result = repository.save(registrationRequest.toSaveRegistration(event));
+
+        publisherService.publish(SendEmaillMessage.builder()
+                .email(registrationRequest.getEmail())
+                .eventName(event.getName())
+                .type(REGISTRATION)
+                .build());
+
+        return result;
     }
 
     private Event findEvent(Long id) {
@@ -66,11 +73,6 @@ public class RegistrationServiceImpl implements RegistrationService {
         }
 
         return event;
-    }
-
-    private User findUser(Long id) {
-        return userRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("User id: " + id + " not found"));
     }
 
     @Override

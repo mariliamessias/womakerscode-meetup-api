@@ -3,7 +3,9 @@ package com.womakerscode.meetup.repository;
 import com.github.database.rider.core.api.connection.ConnectionHolder;
 import com.github.database.rider.junit5.DBUnitExtension;
 import com.womakerscode.meetup.model.RegistrationRequest;
-import com.womakerscode.meetup.model.entity.*;
+import com.womakerscode.meetup.model.entity.Event;
+import com.womakerscode.meetup.model.entity.Registration;
+import com.womakerscode.meetup.model.entity.Status;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -31,9 +33,6 @@ public class RegistrationRepositoryTest {
 
     @Autowired
     private EventRepository eventRepository;
-
-    @Autowired
-    private UserRepository userRepository;
 
     public ConnectionHolder getConnectionHolder() {
         return () -> dataSource.getConnection();
@@ -103,12 +102,10 @@ public class RegistrationRepositoryTest {
     public void testSaveWithUserAndEvent() {
 
         Event event = Event.builder().name("event name").status(Status.ACTIVE).alocatedSpots(50).maximunSpots(100).name("event test").build();
-        User user = User.builder().userName("user.name").role(Role.NORMAL).build();
 
-        User userSaved = userRepository.save(user);
         Event eventSaved = eventRepository.save(event);
 
-        Registration registration = RegistrationRequest.builder().description("test").build().toSaveRegistration(userSaved, eventSaved);
+        Registration registration = RegistrationRequest.builder().description("test").build().toSaveRegistration(eventSaved);
         //execucao
         Registration registrationSaved = repository.save(registration);
 
@@ -126,17 +123,15 @@ public class RegistrationRepositoryTest {
 
         //execucao
         Event event = Event.builder().name("event name 1").status(Status.ACTIVE).alocatedSpots(50).maximunSpots(100).name("event test 1").build();
-        User user = User.builder().userName("user.name").role(Role.NORMAL).build();
 
-        User userSaved = userRepository.save(user);
         Event eventSaved = eventRepository.save(event);
 
-        Registration registration = RegistrationRequest.builder().description("test").status(Status.ACTIVE).build().toSaveRegistration(userSaved, eventSaved);
+        Registration registration = RegistrationRequest.builder().username("username").description("test").status(Status.ACTIVE).build().toSaveRegistration(eventSaved);
 
         repository.save(registration);
 
         //execucao
-        Boolean result = repository.existsByUserIdAndEventId(1L, 1L);
+        Boolean result = repository.existsByUserNameAndEventId("username", 1L);
 
         // assert
         Assertions.assertNotNull(result, "Registration should not be null");

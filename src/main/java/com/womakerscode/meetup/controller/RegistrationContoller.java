@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/registration")
+@RequestMapping("/registrations")
 public class RegistrationContoller {
 
     @Autowired
@@ -36,7 +36,7 @@ public class RegistrationContoller {
         return registrationService
                 .getRegistrationById(id)
                 .map(Registration::toRegistrationResponse)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Registration id: "+ id + " Not Found"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Registration id: " + id + " Not Found"));
     }
 
     @DeleteMapping("{id}")

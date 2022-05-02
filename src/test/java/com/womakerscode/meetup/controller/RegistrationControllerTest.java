@@ -1,18 +1,12 @@
 package com.womakerscode.meetup.controller;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.womakerscode.meetup.configs.Properties;
-import com.womakerscode.meetup.data.UserDetail;
 import com.womakerscode.meetup.exceptions.BusinessException;
 import com.womakerscode.meetup.exceptions.ResourceNotFoundException;
 import com.womakerscode.meetup.model.RegistrationRequest;
 import com.womakerscode.meetup.model.entity.Event;
 import com.womakerscode.meetup.model.entity.Registration;
-import com.womakerscode.meetup.model.entity.User;
 import com.womakerscode.meetup.service.RegistrationService;
-import com.womakerscode.meetup.service.impl.UserDetailServiceImpl;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -27,7 +21,6 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
@@ -59,15 +52,6 @@ public class RegistrationControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @MockBean
-    private UserDetailServiceImpl userDetailService;
-
-    @MockBean
-    private PasswordEncoder passwordEncoder;
-
-    @MockBean
-    private Properties properties;
-
     @Autowired
     MockMvc mockMvc;
 
@@ -83,14 +67,12 @@ public class RegistrationControllerTest {
                 .status(ACTIVE)
                 .description("test")
                 .event(Event.builder().name("event name").build())
-                .user(User.builder().userName("test").build())
+                .username("test")
                 .build();
 
-        UserDetail userDetail = new UserDetail(Optional.of(User.builder().userName("test").build()));
         // execução
         BDDMockito.given(registrationService.save(any(RegistrationRequest.class))).willReturn(savedRegistration);
 
-        BDDMockito.given(userDetailService.loadUserByUsername(anyString())).willReturn(userDetail);
 
         String json = objectMapper.writeValueAsString(registrationRequestBuilder);
 
@@ -98,7 +80,6 @@ public class RegistrationControllerTest {
                 .post(REGISTRATION_API)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer " + buildToken(userDetail))
                 .content(json);
 
         // asserts
@@ -120,14 +101,11 @@ public class RegistrationControllerTest {
                 .status(ACTIVE)
                 .description("test")
                 .event(Event.builder().name("event name").build())
-                .user(User.builder().userName("test").build())
+                .username("test")
                 .build();
 
-        UserDetail userDetail = new UserDetail(Optional.of(User.builder().userName("test").build()));
         // execução
         BDDMockito.given(registrationService.save(any(RegistrationRequest.class))).willReturn(savedRegistration);
-
-        BDDMockito.given(userDetailService.loadUserByUsername(anyString())).willReturn(userDetail);
 
         String json = objectMapper.writeValueAsString(registrationRequestBuilder);
 
@@ -149,12 +127,10 @@ public class RegistrationControllerTest {
     public void createInvalidRegistrationTest() throws Exception {
 
         String json = new ObjectMapper().writeValueAsString(new RegistrationRequest());
-        UserDetail userDetail = new UserDetail(Optional.of(User.builder().userName("test").build()));
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
                 .post(REGISTRATION_API)
                 .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer " + buildToken(userDetail))
                 .accept(MediaType.APPLICATION_JSON)
                 .content(json);
 
@@ -169,7 +145,6 @@ public class RegistrationControllerTest {
     public void createRegistrationWithDuplicatedRegistration() throws Exception {
 
         RegistrationRequest registrationRequest = createNewRegistration();
-        UserDetail userDetail = new UserDetail(Optional.of(User.builder().userName("test").build()));
         String json = new ObjectMapper().writeValueAsString(registrationRequest);
 
         BDDMockito.given(registrationService.save(any(RegistrationRequest.class)))
@@ -178,7 +153,6 @@ public class RegistrationControllerTest {
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
                 .post(REGISTRATION_API)
                 .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer " + buildToken(userDetail))
                 .accept(MediaType.APPLICATION_JSON)
                 .content(json);
 
@@ -194,21 +168,17 @@ public class RegistrationControllerTest {
 
         Long id = 11L;
 
-        UserDetail userDetail = new UserDetail(Optional.of(User.builder().userName("test").build()));
-
         Registration registration = Registration.builder()
                 .id(id)
                 .description(createNewRegistration().getDescription())
                 .status(ACTIVE)
                 .event(Event.builder().name("event name").build())
-                .user(User.builder().userName("test").build())
                 .build();
 
         BDDMockito.given(registrationService.getRegistrationById(id)).willReturn(Optional.of(registration));
 
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get(REGISTRATION_API.concat("/" + id))
-                .header("Authorization", "Bearer " + buildToken(userDetail))
                 .accept(MediaType.APPLICATION_JSON);
 
         mockMvc.perform(requestBuilder)
@@ -230,7 +200,6 @@ public class RegistrationControllerTest {
                 .description(createNewRegistration().getDescription())
                 .status(ACTIVE)
                 .event(Event.builder().name("event name").build())
-                .user(User.builder().userName("test").build())
                 .build();
 
         BDDMockito.given(registrationService.getRegistrationById(id)).willReturn(Optional.of(registration));
@@ -248,13 +217,10 @@ public class RegistrationControllerTest {
     @DisplayName("Should return NOT FOUND when the registration doesn't exists")
     public void registrationNotFoundTest() throws Exception {
 
-        UserDetail userDetail = new UserDetail(Optional.of(User.builder().userName("test").build()));
-
         BDDMockito.given(registrationService.getRegistrationById(anyLong())).willReturn(Optional.empty());
 
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get(REGISTRATION_API.concat("/" + 1))
-                .header("Authorization", "Bearer " + buildToken(userDetail))
                 .accept(MediaType.APPLICATION_JSON);
 
         mockMvc.perform(requestBuilder)
@@ -265,11 +231,8 @@ public class RegistrationControllerTest {
     @DisplayName("Should delete the registration")
     public void deleteRegistration() throws Exception {
 
-        UserDetail userDetail = new UserDetail(Optional.of(User.builder().userName("test").build()));
-
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .delete(REGISTRATION_API.concat("/" + 1))
-                .header("Authorization", "Bearer " + buildToken(userDetail))
                 .accept(MediaType.APPLICATION_JSON);
 
         mockMvc.perform(requestBuilder)
@@ -292,13 +255,10 @@ public class RegistrationControllerTest {
     @DisplayName("Should return resource bad request when no registration is not found to delete")
     public void deleteNonExistentRegistrationTest() throws Exception {
 
-        UserDetail userDetail = new UserDetail(Optional.of(User.builder().userName("test").build()));
-
         BDDMockito.doThrow(new BusinessException("Fail to delete registration with id: 1")).when(registrationService).delete(anyLong());
 
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .delete(REGISTRATION_API.concat("/" + 1))
-                .header("Authorization", "Bearer " + buildToken(userDetail))
                 .accept(MediaType.APPLICATION_JSON);
 
         mockMvc.perform(requestBuilder)
@@ -310,7 +270,6 @@ public class RegistrationControllerTest {
     public void updateRegistrationTest() throws Exception {
 
         Long id = 11L;
-        UserDetail userDetail = new UserDetail(Optional.of(User.builder().userName("test").build()));
 
         RegistrationRequest request = createNewRegistration();
         request.setStatus(CANCELED);
@@ -323,7 +282,6 @@ public class RegistrationControllerTest {
                         .description("test")
                         .status(CANCELED)
                         .event(Event.builder().name("event name").build())
-                        .user(User.builder().userName("test").build())
                         .build();
 
         BDDMockito.given(registrationService
@@ -333,7 +291,6 @@ public class RegistrationControllerTest {
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .put(REGISTRATION_API.concat("/" + id))
                 .content(json)
-                .header("Authorization", "Bearer " + buildToken(userDetail))
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON);
 
@@ -350,8 +307,6 @@ public class RegistrationControllerTest {
     public void forbiddenErrorUpdateRegistrationTest() throws Exception {
 
         Long id = 11L;
-        UserDetail userDetail = new UserDetail(Optional.of(User.builder().userName("test").build()));
-
         RegistrationRequest request = createNewRegistration();
         request.setStatus(CANCELED);
 
@@ -363,7 +318,6 @@ public class RegistrationControllerTest {
                         .description("test")
                         .status(CANCELED)
                         .event(Event.builder().name("event name").build())
-                        .user(User.builder().userName("test").build())
                         .build();
 
         BDDMockito.given(registrationService
@@ -385,8 +339,6 @@ public class RegistrationControllerTest {
     @DisplayName("Should return 404 when try to update an registration no existent")
     public void updateNonExistentRegistrationTest() throws Exception {
 
-        UserDetail userDetail = new UserDetail(Optional.of(User.builder().userName("test").build()));
-
         String json = new ObjectMapper().writeValueAsString(createNewRegistration());
 
         BDDMockito.doThrow(new ResourceNotFoundException("Registration id: 1 not found"))
@@ -395,7 +347,6 @@ public class RegistrationControllerTest {
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .put(REGISTRATION_API.concat("/" + 1))
                 .content(json)
-                .header("Authorization", "Bearer " + buildToken(userDetail))
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON);
 
@@ -414,11 +365,7 @@ public class RegistrationControllerTest {
                 .description("test")
                 .status(ACTIVE)
                 .event(Event.builder().name("event name").build())
-                .user(User.builder().userName("test").build())
                 .build();
-
-        UserDetail userDetail = new UserDetail(Optional.of(User.builder().userName("test").build()));
-
 
         BDDMockito.given(registrationService.find(Mockito.any(Registration.class), Mockito.any(Pageable.class)))
                 .willReturn(new PageImpl<Registration>(Arrays.asList(registration), PageRequest.of(0, 100), 1));
@@ -427,7 +374,6 @@ public class RegistrationControllerTest {
 
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get(REGISTRATION_API.concat(queryString))
-                .header("Authorization", "Bearer " + buildToken(userDetail))
                 .accept(MediaType.APPLICATION_JSON);
 
         mockMvc
@@ -451,11 +397,7 @@ public class RegistrationControllerTest {
                 .description("test")
                 .status(ACTIVE)
                 .event(Event.builder().name("event name").build())
-                .user(User.builder().userName("test").build())
                 .build();
-
-        UserDetail userDetail = new UserDetail(Optional.of(User.builder().userName("test").build()));
-
 
         BDDMockito.given(registrationService.find(Mockito.any(Registration.class), Mockito.any(Pageable.class)))
                 .willReturn(new PageImpl<Registration>(Arrays.asList(registration), PageRequest.of(0, 100), 1));
@@ -474,19 +416,9 @@ public class RegistrationControllerTest {
 
     private RegistrationRequest createNewRegistration() {
         return RegistrationRequest.builder()
-                .userId(1L)
+                .username("user")
                 .eventId(1L)
                 .description("test")
                 .build();
-    }
-
-    private String buildToken(UserDetail userDetail) {
-
-        BDDMockito.given(properties.getProperty(anyString())).willReturn("9ebf2b42-3a5a-4193-ac50-73ea5547af27");
-
-        return JWT.create()
-                .withSubject(userDetail.getUsername())
-                .withExpiresAt(new Date(System.currentTimeMillis() + TOKEN_EXPIRATION))
-                .sign(Algorithm.HMAC512(properties.getProperty("token.password")));
     }
 }

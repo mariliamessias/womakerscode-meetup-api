@@ -1,0 +1,40 @@
+server:
+  port: 9192
+spring:
+  rabbitmq:
+    addresses: ${MQ_ADDRESS}
+  application:
+    name: meetup
+  security:
+    oauth2:
+      resource:
+        token-info-uri: ${OAUTH_TOKEN_URI}
+      client:
+        client-id: ${CLIENT_ID_MEETUP}
+        client-secret: ${CLIENT_ID_MEETUP_SECRET}
+  datasource:
+    url: ${DATASOURCE_URL_MEETUP}
+    username: ${DATASOURCE_USERNAME_MEETUP}
+    password: ${DATASOURCE_PASSWORD_MEETUP}
+    driver-class-name: com.mysql.jdbc.Driver
+    initialization-mode: always
+  jpa:
+    show-sql: true
+    hibernate:
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+
+  mvc:
+    pathmatch:
+      matching-strategy: ANT_PATH_MATCHER
+logging:
+  level:
+    org:
+      hibernate:
+        type: trace
+        SQL: DEBUG
+

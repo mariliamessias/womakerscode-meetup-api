@@ -28,9 +28,8 @@ public class Registration {
     @Column
     private String description;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
-    private User user;
+    @Column(name = "user_name")
+    private String username;
 
     @ManyToOne
     @JoinColumn(name = "event_id", referencedColumnName = "id")
@@ -46,7 +45,7 @@ public class Registration {
                 .id(id)
                 .status(status)
                 .eventName(event.getName())
-                .userName(user.getUserName())
+                .userName(username)
                 .build();
     }
 
