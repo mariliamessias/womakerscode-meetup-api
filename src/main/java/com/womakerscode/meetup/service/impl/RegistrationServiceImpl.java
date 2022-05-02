@@ -6,9 +6,11 @@ import com.womakerscode.meetup.exceptions.ResourceNotFoundException;
 import com.womakerscode.meetup.model.RegistrationRequest;
 import com.womakerscode.meetup.model.SendEmaillMessage;
 import com.womakerscode.meetup.model.entity.Event;
+import com.womakerscode.meetup.model.entity.Person;
 import com.womakerscode.meetup.model.entity.Registration;
 import com.womakerscode.meetup.model.entity.Status;
 import com.womakerscode.meetup.repository.EventRepository;
+import com.womakerscode.meetup.repository.PersonRepository;
 import com.womakerscode.meetup.repository.RegistrationRepository;
 import com.womakerscode.meetup.service.PublisherService;
 import com.womakerscode.meetup.service.RegistrationService;
@@ -32,6 +34,9 @@ public class RegistrationServiceImpl implements RegistrationService {
     EventRepository eventRepository;
 
     @Autowired
+    PersonRepository personRepository;
+
+    @Autowired
     PublisherService publisherService;
 
     @Override
@@ -44,6 +49,8 @@ public class RegistrationServiceImpl implements RegistrationService {
         Event event = findEvent(registrationRequest.getEventId());
         event.setAlocatedSpots(event.getAlocatedSpots() + 1);
 
+        Person person = findPerson(registrationRequest.getUsername());
+
         if (event.getMaximunSpots() <= (event.getAlocatedSpots())) {
             event.setStatus(Status.FULL);
         }
@@ -54,10 +61,16 @@ public class RegistrationServiceImpl implements RegistrationService {
         publisherService.publish(SendEmaillMessage.builder()
                 .email(registrationRequest.getEmail())
                 .eventName(event.getName())
+                .name(person.getName())
                 .type(REGISTRATION)
                 .build());
 
         return result;
+    }
+
+    private Person findPerson(String userName) {
+        return personRepository.findByUsername(userName)
+                .orElseThrow(() -> new ResourceNotFoundException("Person username: " + userName + " not found"));
     }
 
     private Event findEvent(Long id) {
