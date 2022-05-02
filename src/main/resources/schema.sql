@@ -29,6 +29,7 @@ CREATE TABLE IF NOT EXISTS event (
     maximun_spots INTEGER NOT NULL,
     alocated_spots INTEGER NOT NULL,
     created_at DATE NOT NULL,
+    event_date DATE NOT NULL,
     PRIMARY KEY (id)
 );
 

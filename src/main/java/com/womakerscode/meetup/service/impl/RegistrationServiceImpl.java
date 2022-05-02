@@ -62,6 +62,7 @@ public class RegistrationServiceImpl implements RegistrationService {
                 .email(person.getEmail())
                 .eventName(event.getName())
                 .name(person.getName())
+                .eventDate(event.getEventDate().toString())
                 .type(REGISTRATION)
                 .build());
 

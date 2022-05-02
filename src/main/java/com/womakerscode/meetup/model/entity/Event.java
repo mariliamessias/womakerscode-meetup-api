@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +31,9 @@ public class Event {
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
+
+    @Column(name = "event_date")
+    private LocalDate eventDate;
 
     @Column
     private Status status;
