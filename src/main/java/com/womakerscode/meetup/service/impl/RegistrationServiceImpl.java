@@ -4,11 +4,13 @@ import com.womakerscode.meetup.exceptions.BusinessException;
 import com.womakerscode.meetup.exceptions.NotAllowedException;
 import com.womakerscode.meetup.exceptions.ResourceNotFoundException;
 import com.womakerscode.meetup.model.RegistrationRequest;
+import com.womakerscode.meetup.model.SendEmaillMessage;
 import com.womakerscode.meetup.model.entity.Event;
 import com.womakerscode.meetup.model.entity.Registration;
 import com.womakerscode.meetup.model.entity.Status;
 import com.womakerscode.meetup.repository.EventRepository;
 import com.womakerscode.meetup.repository.RegistrationRepository;
+import com.womakerscode.meetup.service.PublisherService;
 import com.womakerscode.meetup.service.RegistrationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
@@ -22,11 +24,15 @@ import java.util.Optional;
 @Service
 public class RegistrationServiceImpl implements RegistrationService {
 
+    public static final String REGISTRATION = "REGISTRATION";
     @Autowired
     RegistrationRepository repository;
 
     @Autowired
     EventRepository eventRepository;
+
+    @Autowired
+    PublisherService publisherService;
 
     @Override
     public Registration save(RegistrationRequest registrationRequest) {
@@ -43,7 +49,15 @@ public class RegistrationServiceImpl implements RegistrationService {
         }
 
         eventRepository.save(event);
-        return repository.save(registrationRequest.toSaveRegistration(event));
+        Registration result = repository.save(registrationRequest.toSaveRegistration(event));
+
+        publisherService.publish(SendEmaillMessage.builder()
+                .email(registrationRequest.getEmail())
+                .eventName(event.getName())
+                .type(REGISTRATION)
+                .build());
+
+        return result;
     }
 
     private Event findEvent(Long id) {

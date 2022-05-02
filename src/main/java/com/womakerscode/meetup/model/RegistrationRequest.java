@@ -9,6 +9,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
@@ -28,6 +29,10 @@ public class RegistrationRequest {
     @NotNull
     @JsonProperty("user_name")
     private String username;
+
+    @NotNull
+    @Email
+    private String email;
 
     @NotNull
     @JsonProperty("event_id")

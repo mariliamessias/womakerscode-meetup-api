@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS address (
 CREATE TABLE IF NOT EXISTS person (
     id bigint NOT NULL AUTO_INCREMENT,
     address_id bigint NOT NULL,
-    user_name bigint NOT NULL,
+    user_name VARCHAR(100) NOT NULL,
     name VARCHAR(150) NOT NULL,
     birth_date DATE NOT NULL,
     email VARCHAR(150) NOT NULL,
@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS event (
 
 CREATE TABLE IF NOT EXISTS registration (
     id bigint NOT NULL AUTO_INCREMENT,
-    user_name bigint NOT NULL,
+    user_name VARCHAR(100) NOT NULL,
     event_id bigint NOT NULL,
     status VARCHAR(128) NOT NULL,
     description VARCHAR(100) NOT NULL,
