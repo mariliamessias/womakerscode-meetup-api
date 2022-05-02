@@ -21,6 +21,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.format.DateTimeFormatter;
+import java.time.format.ResolverStyle;
 import java.util.Optional;
 
 @Service
@@ -58,11 +60,14 @@ public class RegistrationServiceImpl implements RegistrationService {
         eventRepository.save(event);
         Registration result = repository.save(registrationRequest.toSaveRegistration(event));
 
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/uuuu")
+                .withResolverStyle(ResolverStyle.STRICT);
+
         publisherService.publish(SendEmaillMessage.builder()
                 .email(person.getEmail())
                 .eventName(event.getName())
                 .name(person.getName())
-                .eventDate(event.getEventDate().toString())
+                .eventDate(event.getEventDate().format(formatter))
                 .type(REGISTRATION)
                 .build());
 
