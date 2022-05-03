@@ -100,3 +100,11 @@ essa api é responsável por gerenciar a criação de eventos do tipo meetup. O 
   ider-core
   spring-test-dbunit
 ```
+
+ <h4>Próximos Passos:</h4>
+ 
+- Adicionar testes nas apis auth-api e notifications-api;
+- Desenvolver o projeto front-end para se comunicar com os serviços;
+- Adicionar um endpoint para criação de clients na auth-api;
+- Adicionar um template de envio de email em caso o evento seja cancelado.
+
