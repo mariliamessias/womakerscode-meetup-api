@@ -25,8 +25,6 @@ essa api é responsável por gerenciar a criação de eventos do tipo meetup. O 
   <li>Quero ser informado quando eu tentar entrar em um meetup que já foi cancelado.</li>
   </ul>
  
- 
-  
 <h4>Soluções Desenvolvidas</h4>
 
  <ul>
@@ -48,6 +46,44 @@ essa api é responsável por gerenciar a criação de eventos do tipo meetup. O 
 <li>Desenvolvi dois endpoins para atender os cenários citados acima, que serão documentados mais abaixo nesta documentação.</li>
 </ul>
 
+ <h4>Visão geral da arquitetura aplicação:</h4>
+ <img src="./meetup.drawio.png">
+<i>Legenda:</i> de uma maneira resumida, temos o cliente acessando a nossa aplicação através de um client front-end, esse por sua vez utiliza os recursos do microsserviço auth-api para adquirir um token, validar o token ou criar um novo usuário. Após esse processo, é permitido que o client front-end faça uma requisição via token a aplicação backend, cujo nome é meetup-api. A aplicação meetup-api tem acesso a realizar a publicação de uma mensagem na fila que será consumida via notifications-api, que se encarregará de atributir os valores para o template HTML e disparar o email para o cliente.
+ 
+ </br>
+  <h4>Sobre as apis:</h4>
+  
+<b>auth-api</b>: responsável por armazenar os clients e seus respectivos parâmetros, o que implica em um gerenciamento de quais clients podem adquirir acesso a seus recursos. Além disso, é responsável também por armazenar os usuários do nosso fluxo, bem como o gerenciar o seu token de acesso.
+  
+  <b>meetup-api</b>: nesta api temos basicamente quatro grandes responsabilidades: cadastro de eventos, de registros, de pessoas e a publicação de mensagens em um exchange em caso de sucesso de registro de um usuário em um evento. Nessa api existe uma configuração para validação das requests na api auth-api, garantindo a segurança dentro do fluxo, cada request que requer autorização, precisa ser validada junto ao servidor.
+  
+  <b>notifications-api:</b> api responsável por escutar as mensagens na fila de publicação de meetups e enviar um email para o usuário. 
+  
+ <h4>Rotas da aplicação</h4>
+  <img src="./swagger.png">
+  
+  <i>Event</i>
+  
+  GET - /events?status={status} </br>
+  GET - /events/{id} </br>
+  POST - /events </br>
+  PUT - /events/{id} </br>
+  DELETE - /events/{id} </br>
+  PUT - /events/{id}/cancel </br>
+
+  <i>Person</i>
+  
+  GET - /people/{id} </br>
+  POST - /people </br>
+  
+  <i>Registration</i>
+  
+  GET - /registrations/users?user_name={username} </br>
+  GET - /registrations/{id} </br>
+  POST - /registrations </br>
+  PUT - /registrations/{id} </br>
+  DELETE - /registrations/{id} </br>
+
  <h4>Bibliotecas utilizadas no desenvolvimento:</h4>
  
 ```bash
@@ -60,88 +96,4 @@ essa api é responsável por gerenciar a criação de eventos do tipo meetup. O 
   dbunit
   ider-core
   spring-test-dbunit
-```
-
- <h4>Diagrama genérico das partes da aplicação:</h4>
- <img src="./meetup.drawio.png">
-
- 
-  </br>
- <h4>Requests e Responses dos endpoints da aplicação:</h4>
- 
-  <h4>Diagrama genérico das partes da aplicação:</h4>
- <img src="./swagger.png">
-
-
- <h5>Criação de um novo Jedi:</h5>
- 
- ```bash
- Request:
-
- curl --location --request POST 'localhost:8080/jedi' \
---header 'Content-Type: application/json' \
---data-raw '{
-    "name": "teste",
-    "strength": 123
-}'
-
-Response: 200 - OK
-
-{
-    "id": 1,
-    "name": "teste",
-    "strength": 123,
-    "version": 1
-}
-
-```
-
-<h5>Busca de Jedi por Id:</h5>
- 
- ```bash
- Request:
-
-curl --location --request GET 'localhost:8080/jedi/1' \
---header 'Content-Type: application/json' \
---data-raw '{
-    "name": "teste",
-    "strength": 123
-}'
-
-Response: 201 - Created
-
-{
-    "id": 1,
-    "name": "teste",
-    "strength": 123,
-    "version": 1
-}
-
-```
-
-<h5>Alteração nos dados do Jedi:</h5>
- 
- ```bash
- Request:
-
-curl --location --request PUT 'localhost:8080/jedi/1' \
---header 'Content-Type: application/json' \
---data-raw '{
-    "name": "teste 2",
-    "strength": 123
-}'
-
-Response: 204 - No Content
-
-```
-
-<h5>Remoção nos dados do Jedi:</h5>
- 
- ```bash
- Request:
-
-curl --location --request DELETE 'localhost:8080/jedi/1'
-
-Response: 204 - No Content
-
 ```
