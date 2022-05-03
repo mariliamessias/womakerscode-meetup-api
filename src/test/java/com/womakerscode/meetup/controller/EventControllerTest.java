@@ -19,6 +19,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.util.Collections;
 import java.util.Optional;
 
 import static com.womakerscode.meetup.model.entity.Status.ACTIVE;
@@ -129,6 +130,42 @@ public class EventControllerTest {
                 .andExpect(jsonPath("maximun_spots").value("10"))
                 .andExpect(jsonPath("alocated_spots").value("1"))
                 .andExpect(jsonPath("name").value(event.getName()));
+
+    }
+
+    @Test
+    @DisplayName("Should get an event by status with success")
+    public void getEventByStatusTest() throws Exception {
+
+        long id = 1L;
+
+        //cenário
+        Event event = Event.builder()
+                .id(1L)
+                .maximunSpots(10)
+                .alocatedSpots(1)
+                .status(ACTIVE)
+                .name("test name")
+                .build();
+
+        // execução
+        BDDMockito.given(eventService.getEventByStatus(ACTIVE)).willReturn(Collections.singletonList(event));
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .get(EVENT_API)
+                .param("status", ACTIVE.name())
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON);
+
+        // asserts
+        mockMvc
+                .perform(request)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("*.status").value("ACTIVE"))
+                .andExpect(jsonPath("*.id").value(1))
+                .andExpect(jsonPath("*.maximun_spots").value(10))
+                .andExpect(jsonPath("*.alocated_spots").value(1))
+                .andExpect(jsonPath("*.name").value(event.getName()));
 
     }
 

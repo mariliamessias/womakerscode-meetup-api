@@ -3,6 +3,7 @@ package com.womakerscode.meetup.service;
 import com.womakerscode.meetup.model.EventRequest;
 import com.womakerscode.meetup.model.entity.Event;
 import com.womakerscode.meetup.model.entity.Registration;
+import com.womakerscode.meetup.model.entity.Status;
 import com.womakerscode.meetup.repository.EventRepository;
 import com.womakerscode.meetup.repository.RegistrationRepository;
 import com.womakerscode.meetup.service.impl.EventServiceImpl;
@@ -17,6 +18,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -79,6 +81,24 @@ public class EventServiceTest {
         assertThat(savedEvent.get().getMaximunSpots()).isEqualTo(10);
         assertThat(savedEvent.get().getName()).isEqualTo("name");
         assertThat(savedEvent.get().getCreatedAt()).isEqualTo(creationDate);
+    }
+
+    @Test
+    @DisplayName("Should get an event by status")
+    public void getEventByStatusTest() {
+        LocalDateTime creationDate = LocalDateTime.now();
+
+        //execução
+        when(repository.findEventByStatus(eq(Status.ACTIVE))).thenReturn(Collections.singletonList(buildEvent(creationDate)));
+
+        List<Event> savedEvent = eventService.getEventByStatus(Status.ACTIVE);
+
+        //assert
+        assertThat(savedEvent.size()).isEqualTo(1);
+        assertThat(savedEvent.get(0).getAlocatedSpots()).isEqualTo(0);
+        assertThat(savedEvent.get(0).getMaximunSpots()).isEqualTo(10);
+        assertThat(savedEvent.get(0).getName()).isEqualTo("name");
+        assertThat(savedEvent.get(0).getCreatedAt()).isEqualTo(creationDate);
     }
 
     @Test

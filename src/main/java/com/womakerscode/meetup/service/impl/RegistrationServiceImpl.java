@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.format.DateTimeFormatter;
 import java.time.format.ResolverStyle;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -97,6 +98,11 @@ public class RegistrationServiceImpl implements RegistrationService {
     @Override
     public Optional<Registration> getRegistrationById(Long id) {
         return repository.findById(id);
+    }
+
+    @Override
+    public List<Registration> getRegistrationByUserName(String username) {
+        return repository.findRegistrationByUsername(username);
     }
 
     @Override

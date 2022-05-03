@@ -28,6 +28,7 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Optional;
 
 import static com.womakerscode.meetup.model.entity.Status.ACTIVE;
@@ -54,7 +55,6 @@ public class RegistrationControllerTest {
 
     @Autowired
     MockMvc mockMvc;
-
 
     @Test
     @DisplayName("Should create a registration with success")
@@ -150,6 +150,35 @@ public class RegistrationControllerTest {
                 .andExpect(jsonPath("id").value(id))
                 .andExpect(jsonPath("description").value(createNewRegistration().getDescription()))
                 .andExpect(jsonPath("status").value("ACTIVE"));
+
+    }
+
+    @Test
+    @DisplayName("Should get registrations by username")
+    public void getRegistrationByUserNameTest() throws Exception {
+
+        Long id = 11L;
+
+        Registration registration = Registration.builder()
+                .id(id)
+                .description(createNewRegistration().getDescription())
+                .status(ACTIVE)
+                .username("username")
+                .event(Event.builder().name("event name").build())
+                .build();
+
+        BDDMockito.given(registrationService.getRegistrationByUserName("username")).willReturn(Collections.singletonList(registration));
+
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
+                .get(REGISTRATION_API.concat("/users"))
+                .param("user_name", "username")
+                .accept(MediaType.APPLICATION_JSON);
+
+        mockMvc.perform(requestBuilder)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("*.id").value(11))
+                .andExpect(jsonPath("*.description").value(createNewRegistration().getDescription()))
+                .andExpect(jsonPath("*.status").value("ACTIVE"));
 
     }
 

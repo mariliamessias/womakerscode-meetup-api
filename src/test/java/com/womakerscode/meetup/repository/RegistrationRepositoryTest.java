@@ -18,6 +18,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import javax.sql.DataSource;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @ExtendWith({DBUnitExtension.class, SpringExtension.class})
 @SpringBootTest
@@ -62,6 +63,36 @@ public class RegistrationRepositoryTest {
         Assertions.assertEquals(registrationSaved.getId(), registrationExpected.getId(), "Registrations id must be the same");
         Assertions.assertEquals(registrationSaved.getStatus(), registrationExpected.getStatus(), "Registrations status must be the same");
         Assertions.assertEquals(registrationSaved.getDescription(), registrationExpected.getDescription(), "Registrations description must be the same");
+
+    }
+
+    @Test
+    @DisplayName("Should find Registrations by username from repository")
+    public void testFindRegistrationsByUserName() {
+
+        Registration registrationExpected = Registration.builder()
+                .id(1L)
+                .description("teste")
+                .status(Status.CREATED)
+                .createdAt(LocalDateTime.now())
+                .build();
+
+        Registration registration = Registration.builder()
+                .description("teste")
+                .status(Status.CREATED)
+                .createdAt(LocalDateTime.now())
+                .username("username")
+                .build();
+
+        repository.save(registration);
+        //execucao
+        List<Registration> registrationSaved = repository.findRegistrationByUsername("username");
+
+        // assert
+        Assertions.assertFalse(registrationSaved.isEmpty(), "Registration should not be empty");
+        Assertions.assertEquals(registrationSaved.get(0).getId(), registrationExpected.getId(), "Registrations id must be the same");
+        Assertions.assertEquals(registrationSaved.get(0).getStatus(), registrationExpected.getStatus(), "Registrations status must be the same");
+        Assertions.assertEquals(registrationSaved.get(0).getDescription(), registrationExpected.getDescription(), "Registrations description must be the same");
 
     }
 

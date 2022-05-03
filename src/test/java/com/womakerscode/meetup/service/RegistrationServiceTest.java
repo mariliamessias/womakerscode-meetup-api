@@ -23,6 +23,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,8 +37,6 @@ import static org.mockito.Mockito.when;
 @ExtendWith(SpringExtension.class)
 @ActiveProfiles("test")
 public class RegistrationServiceTest {
-
-    public static final String REGISTRATION = "REGISTRATION";
 
     @InjectMocks
     RegistrationServiceImpl registrationService;
@@ -101,6 +100,29 @@ public class RegistrationServiceTest {
         assertThat(foundRegistration.isPresent()).isTrue();
         assertThat(foundRegistration.get().getId()).isEqualTo(id);
         assertThat(foundRegistration.get().getCreatedAt()).isEqualTo(registration.getCreatedAt());
+
+    }
+
+    @Test
+    @DisplayName("Should get an registration by username")
+    public void getRegistrationByUsernameTest() {
+        LocalDateTime creationDate = LocalDateTime.now();
+
+        //cenario
+        Long id = 11L;
+        Registration registration = buildRegistration(creationDate);
+        registration.setId(id);
+
+        when(repository.findRegistrationByUsername("username")).thenReturn(Collections.singletonList(registration));
+
+        // execução
+        List<Registration> foundRegistration = registrationService.getRegistrationByUserName("username");
+
+        //asserts
+        assertThat(foundRegistration.isEmpty()).isFalse();
+        assertThat(foundRegistration.get(0).getId()).isEqualTo(id);
+        assertThat(foundRegistration.get(0).getStatus()).isEqualTo(Status.ACTIVE);
+        assertThat(foundRegistration.get(0).getCreatedAt()).isEqualTo(registration.getCreatedAt());
 
     }
 
@@ -192,6 +214,7 @@ public class RegistrationServiceTest {
     private Registration buildRegistration(LocalDateTime creationDate) {
         return Registration.builder()
                 .description("test")
+                .status(Status.ACTIVE)
                 .createdAt(creationDate)
                 .build();
     }
