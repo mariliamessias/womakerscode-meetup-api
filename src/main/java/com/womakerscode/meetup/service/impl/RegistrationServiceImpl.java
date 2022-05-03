@@ -6,9 +6,11 @@ import com.womakerscode.meetup.exceptions.ResourceNotFoundException;
 import com.womakerscode.meetup.model.RegistrationRequest;
 import com.womakerscode.meetup.model.SendEmaillMessage;
 import com.womakerscode.meetup.model.entity.Event;
+import com.womakerscode.meetup.model.entity.Person;
 import com.womakerscode.meetup.model.entity.Registration;
 import com.womakerscode.meetup.model.entity.Status;
 import com.womakerscode.meetup.repository.EventRepository;
+import com.womakerscode.meetup.repository.PersonRepository;
 import com.womakerscode.meetup.repository.RegistrationRepository;
 import com.womakerscode.meetup.service.PublisherService;
 import com.womakerscode.meetup.service.RegistrationService;
@@ -19,6 +21,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.format.DateTimeFormatter;
+import java.time.format.ResolverStyle;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -30,6 +35,9 @@ public class RegistrationServiceImpl implements RegistrationService {
 
     @Autowired
     EventRepository eventRepository;
+
+    @Autowired
+    PersonRepository personRepository;
 
     @Autowired
     PublisherService publisherService;
@@ -44,6 +52,8 @@ public class RegistrationServiceImpl implements RegistrationService {
         Event event = findEvent(registrationRequest.getEventId());
         event.setAlocatedSpots(event.getAlocatedSpots() + 1);
 
+        Person person = findPerson(registrationRequest.getUsername());
+
         if (event.getMaximunSpots() <= (event.getAlocatedSpots())) {
             event.setStatus(Status.FULL);
         }
@@ -51,13 +61,23 @@ public class RegistrationServiceImpl implements RegistrationService {
         eventRepository.save(event);
         Registration result = repository.save(registrationRequest.toSaveRegistration(event));
 
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/uuuu")
+                .withResolverStyle(ResolverStyle.STRICT);
+
         publisherService.publish(SendEmaillMessage.builder()
-                .email(registrationRequest.getEmail())
+                .email(person.getEmail())
                 .eventName(event.getName())
+                .name(person.getName())
+                .eventDate(event.getEventDate().format(formatter))
                 .type(REGISTRATION)
                 .build());
 
         return result;
+    }
+
+    private Person findPerson(String userName) {
+        return personRepository.findByUsername(userName)
+                .orElseThrow(() -> new ResourceNotFoundException("Person username: " + userName + " not found"));
     }
 
     private Event findEvent(Long id) {
@@ -78,6 +98,11 @@ public class RegistrationServiceImpl implements RegistrationService {
     @Override
     public Optional<Registration> getRegistrationById(Long id) {
         return repository.findById(id);
+    }
+
+    @Override
+    public List<Registration> getRegistrationByUserName(String username) {
+        return repository.findRegistrationByUsername(username);
     }
 
     @Override

@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import static com.womakerscode.meetup.model.entity.Status.CREATED;
@@ -28,11 +29,15 @@ public class EventRequest {
     @JsonProperty("alocated_spots")
     private Integer alocatedSpots;
 
+    @JsonProperty("event_date")
+    private LocalDate eventDate;
+
     public Event toSaveEvent() {
         return Event.builder()
                 .status(CREATED)
                 .createdAt(LocalDateTime.now())
                 .name(name)
+                .eventDate(eventDate)
                 .maximunSpots(maximunSpots)
                 .alocatedSpots(alocatedSpots)
                 .build();

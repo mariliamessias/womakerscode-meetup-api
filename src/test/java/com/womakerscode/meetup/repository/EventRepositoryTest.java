@@ -3,6 +3,7 @@ package com.womakerscode.meetup.repository;
 import com.github.database.rider.core.api.connection.ConnectionHolder;
 import com.github.database.rider.junit5.DBUnitExtension;
 import com.womakerscode.meetup.model.entity.Event;
+import com.womakerscode.meetup.model.entity.Status;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,6 +15,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import javax.sql.DataSource;
+import java.util.List;
 import java.util.Optional;
 
 @ExtendWith({DBUnitExtension.class, SpringExtension.class})
@@ -90,6 +92,40 @@ public class EventRepositoryTest {
         Assertions.assertEquals(eventSaved.get().getId(), eventExpected.getId(), "Event id must be the same");
         Assertions.assertEquals(eventSaved.get().getAlocatedSpots(), eventExpected.getAlocatedSpots(), "Event AlocatedSpots must be the same");
         Assertions.assertEquals(eventSaved.get().getMaximunSpots(), eventExpected.getMaximunSpots(), "Event MaximunSpots must be the same");
+
+    }
+
+    @Test
+    @DisplayName("Should get Event by status with success from repository")
+    public void testGetEventByStatus() {
+
+        Event eventExpected = Event.builder()
+                .id(1L)
+                .name("name")
+                .alocatedSpots(0)
+                .maximunSpots(10)
+                .status(Status.ACTIVE)
+                .build();
+
+        Event event = Event.builder()
+                .name("name")
+                .alocatedSpots(0)
+                .maximunSpots(10)
+                .status(Status.ACTIVE)
+                .build();
+
+        repository.save(event);
+        //execucao
+        List<Event> eventSaved = repository.findEventByStatus(Status.ACTIVE);
+
+        // assert
+        Assertions.assertNotNull(eventSaved, "Event should not be null");
+        Assertions.assertFalse(eventSaved.isEmpty(), "Event should not be empty");
+
+        Assertions.assertEquals(eventSaved.get(0).getId(), eventExpected.getId(), "Event id must be the same");
+        Assertions.assertEquals(eventSaved.get(0).getAlocatedSpots(), eventExpected.getAlocatedSpots(), "Event AlocatedSpots must be the same");
+        Assertions.assertEquals(eventSaved.get(0).getMaximunSpots(), eventExpected.getMaximunSpots(), "Event MaximunSpots must be the same");
+        Assertions.assertEquals(eventSaved.get(0).getStatus(), eventExpected.getStatus(), "Event status must be the same");
 
     }
 
@@ -179,7 +215,7 @@ public class EventRepositoryTest {
         Assertions.assertEquals(response.getMaximunSpots(), eventExpected.getMaximunSpots(), "Event MaximunSpots must be the same");
 
     }
-    
+
     @Test
     @DisplayName("Should update Event to canceled with success from repository")
     public void testCancelEvent() {

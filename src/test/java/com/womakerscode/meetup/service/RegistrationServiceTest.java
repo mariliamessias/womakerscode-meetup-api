@@ -2,9 +2,11 @@ package com.womakerscode.meetup.service;
 
 import com.womakerscode.meetup.model.RegistrationRequest;
 import com.womakerscode.meetup.model.entity.Event;
+import com.womakerscode.meetup.model.entity.Person;
 import com.womakerscode.meetup.model.entity.Registration;
 import com.womakerscode.meetup.model.entity.Status;
 import com.womakerscode.meetup.repository.EventRepository;
+import com.womakerscode.meetup.repository.PersonRepository;
 import com.womakerscode.meetup.repository.RegistrationRepository;
 import com.womakerscode.meetup.service.impl.RegistrationServiceImpl;
 import org.junit.jupiter.api.DisplayName;
@@ -19,7 +21,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,32 +45,32 @@ public class RegistrationServiceTest {
     RegistrationRepository repository;
 
     @Mock
-    UserRepository userRepository;
+    EventRepository eventRepository;
 
     @Mock
-    EventRepository eventRepository;
+    PersonRepository personRepository;
+
+    @Mock
+    PublisherService publisherService;
 
     @Test
     @DisplayName("Should save an registration")
     public void saveRegistrationTest() {
         LocalDateTime creationDate = LocalDateTime.now();
-        Long userId = 1L;
         Long eventId = 1L;
 
         //cenario
         RegistrationRequest registrationRequest = RegistrationRequest.builder()
                 .description("test")
                 .eventId(eventId)
-                .userId(userId)
+                .username("username")
                 .build();
 
-        User user = User.builder().build();
-        Event event = Event.builder().status(Status.CREATED).maximunSpots(10).alocatedSpots(0).build();
+        Event event = Event.builder().eventDate(LocalDate.now()).status(Status.CREATED).maximunSpots(10).alocatedSpots(0).build();
         //execução
 
         when(eventRepository.findById(any())).thenReturn(Optional.of(event));
-        when(userRepository.findById(any())).thenReturn(Optional.of(user));
-
+        when(personRepository.findByUsername("username")).thenReturn(Optional.of(buildPerson(creationDate)));
         when(repository.save(any(Registration.class))).thenReturn(buildRegistration(creationDate));
 
         Registration savedRegistration = registrationService.save(registrationRequest);
@@ -96,6 +100,29 @@ public class RegistrationServiceTest {
         assertThat(foundRegistration.isPresent()).isTrue();
         assertThat(foundRegistration.get().getId()).isEqualTo(id);
         assertThat(foundRegistration.get().getCreatedAt()).isEqualTo(registration.getCreatedAt());
+
+    }
+
+    @Test
+    @DisplayName("Should get an registration by username")
+    public void getRegistrationByUsernameTest() {
+        LocalDateTime creationDate = LocalDateTime.now();
+
+        //cenario
+        Long id = 11L;
+        Registration registration = buildRegistration(creationDate);
+        registration.setId(id);
+
+        when(repository.findRegistrationByUsername("username")).thenReturn(Collections.singletonList(registration));
+
+        // execução
+        List<Registration> foundRegistration = registrationService.getRegistrationByUserName("username");
+
+        //asserts
+        assertThat(foundRegistration.isEmpty()).isFalse();
+        assertThat(foundRegistration.get(0).getId()).isEqualTo(id);
+        assertThat(foundRegistration.get(0).getStatus()).isEqualTo(Status.ACTIVE);
+        assertThat(foundRegistration.get(0).getCreatedAt()).isEqualTo(registration.getCreatedAt());
 
     }
 
@@ -135,7 +162,6 @@ public class RegistrationServiceTest {
     @DisplayName("Should update an registration")
     public void updateRegistrationTest() {
         LocalDateTime creationDate = LocalDateTime.now();
-        Long userId = 1L;
         Long eventId = 1L;
 
         //cenario
@@ -144,7 +170,7 @@ public class RegistrationServiceTest {
         RegistrationRequest registrationRequest = RegistrationRequest.builder()
                 .description("test")
                 .eventId(eventId)
-                .userId(userId)
+                .username("username")
                 .build();
 
         //execução
@@ -188,7 +214,17 @@ public class RegistrationServiceTest {
     private Registration buildRegistration(LocalDateTime creationDate) {
         return Registration.builder()
                 .description("test")
+                .status(Status.ACTIVE)
                 .createdAt(creationDate)
+                .build();
+    }
+
+    private Person buildPerson(LocalDateTime creationDate) {
+        return Person.builder()
+                .createdAt(creationDate)
+                .name("name")
+                .email("email")
+                .birthDate(LocalDate.now())
                 .build();
     }
 }

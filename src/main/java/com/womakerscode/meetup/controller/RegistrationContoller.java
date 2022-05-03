@@ -39,6 +39,16 @@ public class RegistrationContoller {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Registration id: " + id + " Not Found"));
     }
 
+    @GetMapping("/users")
+    @ResponseStatus(HttpStatus.OK)
+    public List<RegistrationResponse> getByUserName(@RequestParam(name = "user_name") String userName) {
+
+        return registrationService
+                .getRegistrationByUserName(userName)
+                .stream().map(Registration::toRegistrationResponse)
+                .collect(Collectors.toList());
+    }
+
     @DeleteMapping("{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Long id) {
