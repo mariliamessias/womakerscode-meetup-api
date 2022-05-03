@@ -33,10 +33,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(SpringExtension.class)
 @ActiveProfiles("test")
 @WebMvcTest(controllers = {PersonController.class})
-@AutoConfigureMockMvc
+@AutoConfigureMockMvc(addFilters = false)
 public class PersonControllerTest {
 
-    static String PERSON_API = "/person";
+    static String PERSON_API = "/people";
 
     @MockBean
     PersonService personService;
@@ -46,8 +46,6 @@ public class PersonControllerTest {
 
     @Autowired
     MockMvc mockMvc;
-
-    public static final int TOKEN_EXPIRATION = 600_000;
 
     @Test
     @DisplayName("Should create a person with success")
@@ -72,7 +70,6 @@ public class PersonControllerTest {
 
         // execução
         BDDMockito.given(personService.save(any(PersonRequest.class))).willReturn(person);
-
 
         String json = objectMapper.writeValueAsString(personRequest);
 
@@ -113,45 +110,6 @@ public class PersonControllerTest {
         mockMvc
                 .perform(request)
                 .andExpect(status().isBadRequest());
-
-    }
-
-    @Test
-    @DisplayName("Should not create a person when has not Authorization token")
-    public void forbiddenCreatePersonTest() throws Exception {
-
-        //cenário
-        PersonRequest personRequest = createNewPerson();
-        Person person = Person.builder()
-                .name("test name test name")
-                .birthDate(LocalDate.now())
-                .email("email@email.com")
-                .createdAt(LocalDateTime.now())
-                .address(Address.builder()
-                        .city("city test")
-                        .country("country test")
-                        .neighborhood("neighborhood test")
-                        .number(123)
-                        .publicPlace("public test")
-                        .zipCode("1233")
-                        .build())
-                .build();
-
-        // execução
-        BDDMockito.given(personService.save(any(PersonRequest.class))).willReturn(person);
-
-        String json = objectMapper.writeValueAsString(personRequest);
-
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-                .post(PERSON_API)
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON)
-                .content(json);
-
-        // asserts
-        mockMvc
-                .perform(request)
-                .andExpect(status().isForbidden());
 
     }
 
@@ -216,22 +174,6 @@ public class PersonControllerTest {
         mockMvc
                 .perform(request)
                 .andExpect(status().isNotFound());
-
-    }
-
-    @Test
-    @DisplayName("Should not get a person by id when has not Authorization token")
-    public void forbiddenErrorGetPersonByidTest() throws Exception {
-        long id = 1L;
-
-        // execução
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-                .get(PERSON_API.concat("/" + id))
-                .accept(MediaType.APPLICATION_JSON);
-        // asserts
-        mockMvc
-                .perform(request)
-                .andExpect(status().isForbidden());
 
     }
 

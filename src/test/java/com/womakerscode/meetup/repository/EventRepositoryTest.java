@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -19,6 +20,7 @@ import java.util.Optional;
 @ExtendWith({DBUnitExtension.class, SpringExtension.class})
 @SpringBootTest
 @ActiveProfiles("test")
+@PropertySource("classpath:application-test.yml")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class EventRepositoryTest {
 
@@ -179,7 +181,7 @@ public class EventRepositoryTest {
         Assertions.assertEquals(response.getMaximunSpots(), eventExpected.getMaximunSpots(), "Event MaximunSpots must be the same");
 
     }
-    
+
     @Test
     @DisplayName("Should update Event to canceled with success from repository")
     public void testCancelEvent() {

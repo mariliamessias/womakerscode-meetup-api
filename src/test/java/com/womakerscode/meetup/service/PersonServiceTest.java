@@ -38,9 +38,6 @@ public class PersonServiceTest {
     @Mock
     AddressRepository addressRepository;
 
-    @Mock
-    UserRepository userRepository;
-
     @Test
     @DisplayName("Should save a person")
     public void savePersonTest() {
@@ -49,7 +46,7 @@ public class PersonServiceTest {
         PersonRequest personRequest = PersonRequest.builder()
                 .name("name")
                 .email("email")
-                .userId(1L)
+                .username("username")
                 .birthDate(LocalDate.now())
                 .address(AddressRequest
                         .builder()
@@ -64,7 +61,6 @@ public class PersonServiceTest {
         when(repository.save(any())).thenReturn(buildPerson(creationDate));
 
         when(addressRepository.save(any())).thenReturn(buildAddress(creationDate));
-        when(userRepository.findById(eq(1L))).thenReturn(Optional.of(buildUser(creationDate)));
 
         Person savedPerson = personService.save(personRequest);
 
@@ -112,13 +108,4 @@ public class PersonServiceTest {
                 .build();
     }
 
-
-    private User buildUser(LocalDateTime creationDate) {
-        return User.builder()
-                .userName("username")
-                .password("124")
-                .role(Role.ADMIN)
-                .createdAt(creationDate)
-                .build();
-    }
 }

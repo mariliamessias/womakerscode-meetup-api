@@ -31,10 +31,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(SpringExtension.class)
 @ActiveProfiles("test")
 @WebMvcTest(controllers = {EventController.class})
-@AutoConfigureMockMvc
+@AutoConfigureMockMvc(addFilters = false)
 public class EventControllerTest {
 
-    static String EVENT_API = "/event";
+    static String EVENT_API = "/events";
 
     @MockBean
     EventService eventService;
@@ -44,8 +44,6 @@ public class EventControllerTest {
 
     @Autowired
     MockMvc mockMvc;
-
-    public static final int TOKEN_EXPIRATION = 600_000;
 
     @Test
     @DisplayName("Should create an event with success")
@@ -96,28 +94,6 @@ public class EventControllerTest {
         mockMvc
                 .perform(request)
                 .andExpect(status().isBadRequest());
-
-    }
-
-    @Test
-    @DisplayName("Should not create an event when has not Authorization token")
-    public void forbiddenErrorCreateEventTest() throws Exception {
-
-        //cenário
-        EventRequest eventRequest = createNewEvent();
-        // execução
-        String json = objectMapper.writeValueAsString(eventRequest);
-
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-                .post(EVENT_API)
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON)
-                .content(json);
-
-        // asserts
-        mockMvc
-                .perform(request)
-                .andExpect(status().isForbidden());
 
     }
 
@@ -177,25 +153,6 @@ public class EventControllerTest {
     }
 
     @Test
-    @DisplayName("Should not get by id an event when has not Authorization token")
-    public void forbiddenErrorGetEventByIdTest() throws Exception {
-
-        long id = 1L;
-        // execução
-
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-                .get(EVENT_API.concat("/" + id))
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON);
-
-        // asserts
-        mockMvc
-                .perform(request)
-                .andExpect(status().isForbidden());
-
-    }
-
-    @Test
     @DisplayName("Should delete an event by id with success")
     public void deleteEventByIdTest() throws Exception {
 
@@ -211,23 +168,6 @@ public class EventControllerTest {
         mockMvc
                 .perform(request)
                 .andExpect(status().isNoContent());
-
-    }
-
-    @Test
-    @DisplayName("Should not delete an event by id when has not Authorization token")
-    public void forbiddenErrorDeleteEventByIdTest() throws Exception {
-
-        long id = 1L;
-        // execução
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-                .delete(EVENT_API.concat("/" + id))
-                .accept(MediaType.APPLICATION_JSON);
-
-        // asserts
-        mockMvc
-                .perform(request)
-                .andExpect(status().isForbidden());
 
     }
 
@@ -269,32 +209,6 @@ public class EventControllerTest {
     }
 
     @Test
-    @DisplayName("Should not update an event by id when has not Authorization token")
-    public void forbiddenErrorUpdateEventByIdTest() throws Exception {
-
-        long id = 1L;
-
-        //cenário
-        EventRequest eventRequest = createNewEvent();
-
-        String json = objectMapper.writeValueAsString(eventRequest);
-
-        // execução
-
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-                .put(EVENT_API.concat("/" + id))
-                .accept(MediaType.APPLICATION_JSON)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(json);
-
-        // asserts
-        mockMvc
-                .perform(request)
-                .andExpect(status().isForbidden());
-
-    }
-
-    @Test
     @DisplayName("Should update to canceled an event by id with success")
     public void updateCancelEventByIdTest() throws Exception {
 
@@ -328,32 +242,6 @@ public class EventControllerTest {
                 .andExpect(jsonPath("maximun_spots").value("10"))
                 .andExpect(jsonPath("alocated_spots").value("1"))
                 .andExpect(jsonPath("name").value(eventRequest.getName()));
-
-    }
-
-    @Test
-    @DisplayName("Should not update to canceled an event by id when has not Authorization token")
-    public void forbiddenErrorUpdateCancelEventByIdTest() throws Exception {
-
-        long id = 1L;
-
-        //cenário
-        EventRequest eventRequest = createNewEvent();
-
-        String json = objectMapper.writeValueAsString(eventRequest);
-
-        // execução
-
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-                .put(EVENT_API.concat("/" + id + "/cancel"))
-                .accept(MediaType.APPLICATION_JSON)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(json);
-
-        // asserts
-        mockMvc
-                .perform(request)
-                .andExpect(status().isForbidden());
 
     }
 

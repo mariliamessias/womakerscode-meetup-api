@@ -131,7 +131,7 @@ public class RegistrationRepositoryTest {
         repository.save(registration);
 
         //execucao
-        Boolean result = repository.existsByUserNameAndEventId("username", 1L);
+        Boolean result = repository.existsByUsernameAndEventId("username", 1L);
 
         // assert
         Assertions.assertNotNull(result, "Registration should not be null");
