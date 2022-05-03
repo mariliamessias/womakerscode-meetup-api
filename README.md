@@ -53,11 +53,11 @@ essa api é responsável por gerenciar a criação de eventos do tipo meetup. O 
  </br>
   <h4>Sobre as apis:</h4>
   
-<b>notifications-api:</b> api responsável por escutar as mensagens na fila de publicação de meetups e enviar um email para o usuário. Segue abaixo exemplo de email enviado para um usuário no momento de cadastro no evento com sucesso:
+<b>notifications-api: [https://github.com/mariliamessias/womakerscode-notifcations-api]</b> api responsável por escutar as mensagens na fila de publicação de meetups e enviar um email para o usuário. Segue abaixo exemplo de email enviado para um usuário no momento de cadastro no evento com sucesso:
   
   <img src="./email.png">
 
-<b>auth-api</b>: responsável por armazenar os clients e seus respectivos parâmetros, o que implica em um gerenciamento de quais clients podem adquirir acesso a seus recursos. Além disso, é responsável também por armazenar os usuários do nosso fluxo, bem como o gerenciar o seu token de acesso.
+<b>auth-api: [https://github.com/mariliamessias/womakerscode-auth-api] </b> responsável por armazenar os clients e seus respectivos parâmetros, o que implica em um gerenciamento de quais clients podem adquirir acesso a seus recursos. Além disso, é responsável também por armazenar os usuários do nosso fluxo, bem como o gerenciar o seu token de acesso.
   
 <b>meetup-api</b>: nesta api temos basicamente quatro grandes responsabilidades: cadastro de eventos, de registros, de pessoas e a publicação de mensagens em um exchange em caso de sucesso de registro de um usuário em um evento. Nessa api existe uma configuração para validação das requests na api auth-api, garantindo a segurança dentro do fluxo, cada request que requer autorização, precisa ser validada junto ao servidor.
   
