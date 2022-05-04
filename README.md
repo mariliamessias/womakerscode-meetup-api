@@ -88,8 +88,10 @@ essa api é responsável por gerenciar a criação de eventos do tipo meetup. O 
   DELETE - /registrations/{id} </br>
   
 <h4>Rotas da aplicação - AUTH-API</h4>
+Link de acesso a documentação da api: [https://github.com/mariliamessias/womakerscode-auth-api]
 
  <h4>Bibliotecas utilizadas no desenvolvimento:</h4>
+ 
  
 ```bash
 
