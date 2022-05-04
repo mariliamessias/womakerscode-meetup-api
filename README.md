@@ -62,7 +62,7 @@ essa api é responsável por gerenciar a criação de eventos do tipo meetup. O 
 <b>meetup-api</b>: nesta api temos basicamente quatro grandes responsabilidades: cadastro de eventos, de registros, de pessoas e a publicação de mensagens em um exchange em caso de sucesso de registro de um usuário em um evento. Nessa api existe uma configuração para validação das requests na api auth-api, garantindo a segurança dentro do fluxo, cada request que requer autorização, precisa ser validada junto ao servidor.
   
   
- <h4>Rotas da aplicação</h4>
+ <h4>Rotas da aplicação - MEETUP</h4>
   <img src="./swagger.png">
   
   <i>Event</i>
@@ -86,6 +86,8 @@ essa api é responsável por gerenciar a criação de eventos do tipo meetup. O 
   POST - /registrations </br>
   PUT - /registrations/{id} </br>
   DELETE - /registrations/{id} </br>
+  
+<h4>Rotas da aplicação - AUTH-API</h4>
 
  <h4>Bibliotecas utilizadas no desenvolvimento:</h4>
  
