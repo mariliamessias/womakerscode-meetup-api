@@ -91,11 +91,22 @@ essa api é responsável por gerenciar a criação de eventos do tipo meetup. O 
  
 ```bash
 
-  spring-boot-starter-data-jdbc
   spring-boot-starter-web
-  h2database
   spring-boot-starter-test
+  spring-cloud-starter-oauth2
+  spring-boot-starter-validation
+  spring-boot-starter-data-jpa
+  spring-boot-starter-mail
+  spring-boot-starter-amqp
+  spring-boot-starter-thymeleaf
+  passay
   junit-jupiter-api
+  spring-secutiry
+  mysql-connector
+  h2database
+  lombok
+  spring-rabbit-test
+  azurewebapp
   dbunit
   ider-core
   spring-test-dbunit
