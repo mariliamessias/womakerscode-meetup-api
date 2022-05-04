@@ -94,7 +94,7 @@ Link de acesso a documentação da api: [https://github.com/mariliamessias/womak
 <h4>Rotas da aplicação - NOTIFICATIONS-API</h4>
 Link de acesso a documentação da api: [https://github.com/mariliamessias/womakerscode-notifcations-api]
 
- <h4>Bibliotecas utilizadas no desenvolvimento:</h4>
+ <h4>Bibliotecas utilizadas no desenvolvimento dos três projetos:</h4>
  
  
 ```bash
