@@ -51,6 +51,8 @@ essa api é responsável por gerenciar a criação de eventos do tipo meetup. O 
 <i>Legenda:</i> de uma maneira resumida, temos o cliente acessando a nossa aplicação através de um client front-end, esse por sua vez utiliza os recursos do microsserviço auth-api para adquirir um token, validar o token ou criar um novo usuário. Após esse processo, é permitido que o client front-end faça uma requisição via token a aplicação backend, cujo nome é meetup-api. A aplicação meetup-api tem acesso a realizar a publicação de uma mensagem na fila que será consumida via notifications-api, que se encarregará de atributir os valores para o template HTML e disparar o email para o cliente.
  
  </br>
+<b><i>Observação:</i></b> o website meetup-frontend ainda não foi desenvolvido, e foi informado nesse desenho de arquitetura pois será acoplado a ela após a finalização do seu desenvolvimento.  
+ </br>
   <h4>Sobre as apis:</h4>
   
 <b>notifications-api: [https://github.com/mariliamessias/womakerscode-notifcations-api]</b> api responsável por escutar as mensagens na fila de publicação de meetups e enviar um email para o usuário. Segue abaixo exemplo de email enviado para um usuário no momento de cadastro no evento com sucesso:
