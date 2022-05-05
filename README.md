@@ -342,11 +342,114 @@ curl --location --request GET 'localhost:9191/people/1' \
   <i>Registration</i>
   
   GET - /registrations/users?user_name={username} </br>
+  
+  <i>Request:</i>
+  ````
+  curl --location --request GET 'localhost:9191/registrations/users?user_name={USERNAME}' \
+--header 'Authorization: Bearer 659f90ca-9acd-4fe5-a1a8-XXX'
+  ````
+  <i>Response:</i>
+  ````
+  [
+    {
+        "id": 2,
+        "status": "CREATED",
+        "description": "convite estudante",
+        "created_at": "2022-05-02T06:42:30",
+        "user_name": "{USERNAME}",
+        "event_name": "novas features java 17"
+    },
+    {
+        "id": 4,
+        "status": "CREATED",
+        "description": "convite estudante",
+        "created_at": "2022-05-03T13:05:29",
+        "user_name": "{USERNAME}",
+        "event_name": "novas features java 11"
+    }
+]
+  ````
+  
   GET - /registrations/{id} </br>
-  POST - /registrations </br>
+  <i>Request:</i>
+  ````
+  curl --location --request GET 'localhost:9191/registrations/2' \
+--header 'Authorization: Bearer 659f90ca-9acd-4fe5-a1a8-XXX' \'
+  ````
+ <i>Response:</i>
+ ````
+     {
+        "id": 2,
+        "status": "CREATED",
+        "description": "convite estudante",
+        "created_at": "2022-05-03T13:05:29",
+        "user_name": "{USERNAME}",
+        "event_name": "novas features java 11"
+    }
+ ````
+  
+POST - /registrations </br>
+  
+  <i>Request:</i>
+  ````
+  curl --location --request POST 'localhost:9191/registrations' \
+--header 'Authorization: Bearer 659f90ca-9acd-4fe5-a1a8-XXX' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "description": "convite estudante",
+    "user_name": "{USERNAME}",
+    "event_id": 2
+}'
+  ````
+  
+ <i>Response</i>
+ ````
+ {
+    "id": 5,
+    "status": "CREATED",
+    "description": "convite estudante",
+    "created_at": "2022-05-03T17:28:41.333815",
+    "user_name": "{USERNAME}",
+    "event_name": "novas features java 17"
+}
+ ````
+  
   PUT - /registrations/{id} </br>
+  
+  <i>Request:</i>
+  ````
+  curl --location --request PUT 'localhost:9191/registrations/5' \
+--header 'Authorization: Bearer 4c1726c7-3f0c-4c7a-869e-XXXX' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "status": "CANCELED",
+    "description": "convite estudante",
+    "user_name": "{USERNAME}",
+    "event_id": 2
+    }'
+  ````
+  
+ <i>Response:</i>
+ ````
+{
+    "id": 5,
+    "status": "CANCELED",
+    "description": "convite estudante",
+    "created_at": "2022-05-03T17:28:41",
+    "user_name": "{USERNAME}",
+    "event_name": "novas features java 17"
+}
+````
+  
   DELETE - /registrations/{id} </br>
   
+  <i>Request:</i>
+  ````
+  curl --location --request DELETE 'localhost:9191/registrations/5' \
+--header 'Authorization: Bearer 4c1726c7-3f0c-4c7a-869e-14f32953b42b' \
+  ````
+<i>Response:</i> 204 - NO CONTENT
+
 <h4>Rotas da aplicação - AUTH-API</h4>
 Link de acesso a documentação da api: [https://github.com/mariliamessias/womakerscode-auth-api]
 
