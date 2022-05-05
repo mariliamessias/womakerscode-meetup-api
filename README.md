@@ -68,16 +68,276 @@ essa api é responsável por gerenciar a criação de eventos do tipo meetup. O 
   <i>Event</i>
   
   GET - /events?status={status} </br>
+  
+  <i>Request:</i>
+  
+  ````
+  curl --location --request GET 'localhost:9191/events?status=FULL' \
+--header 'Authorization: Bearer 659f90ca-9acd-4fe5-a1a8-XXXX'
+  ````
+  
+  <i>Response:</i>
+
+  ````
+  [
+    {
+        "id": 1,
+        "name": "novas features java 17",
+        "status": "FULL",
+        "registrations": [
+            {
+                "id": 1,
+                "status": "CREATED",
+                "description": "convite estudante",
+                "created_at": "2022-05-02T06:41:41",
+                "user_name": "{USERNAME)",
+                "event_name": "novas features java 17"
+            },
+            {
+                "id": 2,
+                "status": "CREATED",
+                "description": "convite estudante",
+                "created_at": "2022-05-02T06:42:30",
+                "user_name": "{USERNAME}",
+                "event_name": "novas features java 17"
+            },
+            {
+                "id": 3,
+                "status": "CREATED",
+                "description": "convite estudante",
+                "created_at": "2022-05-02T06:44:31",
+                "user_name": "{USERNAME}",
+                "event_name": "novas features java 17"
+            }
+        ],
+        "created_at": "2022-05-02T06:41:13",
+        "maximun_spots": 3,
+        "alocated_spots": 3
+    }
+]
+  ````
   GET - /events/{id} </br>
+  
+  <i>Request:</i>
+  ````
+  curl --location --request GET 'localhost:9191/events/2' \
+--header 'Authorization: Bearer 659f90ca-9acd-4fe5-a1a8-XXX' \
+  ````
+  
+  <i>Response:</i>
+  
+  ````
+  {
+    "id": 2,
+    "name": "novas features java 17",
+    "status": "CREATED",
+    "registrations": [
+        {
+            "id": 4,
+            "status": "CREATED",
+            "description": "convite estudante",
+            "created_at": "2022-05-03T13:05:29",
+            "user_name": "{USERNAME}",
+            "event_name": "novas features java 17"
+        },
+        {
+            "id": 5,
+            "status": "CREATED",
+            "description": "convite estudante",
+            "created_at": "2022-05-03T17:28:41",
+            "user_name": "{USERNAME}",
+            "event_name": "novas features java 17"
+        }
+    ],
+    "created_at": "2022-05-03T13:05:13",
+    "maximun_spots": 3,
+    "alocated_spots": 2
+}
+  ````
+  
   POST - /events </br>
+  
+  <i>Request: </i>
+  ````
+  curl --location --request POST 'localhost:9191/events' \
+--header 'Authorization: Bearer 659f90ca-9acd-4fe5-a1a8-XXXX' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "name": "novas features java 17",
+    "maximun_spots": 3,
+    "alocated_spots": 0,
+    "event_date": "2022-06-01"
+}'
+  ````
+ <i>Response: </i>
+    
+   ````
+   {
+   "id": 3,
+   "name": "novas features java 17",
+   "status": "CREATED",
+   "registrations": [],
+   "created_at": "2022-05-03T13:09:17.335272",
+   "maximun_spots": 3,
+   "alocated_spots": 0
+}
+   ````
+  
   PUT - /events/{id} </br>
+<i>Request: </i>
+
+ ````
+ curl --location --request PUT 'localhost:9191/events/1' \
+--header 'Authorization: Bearer 659f90ca-9acd-4fe5-a1a8-XXX' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "maximun_spots": 3
+}'
+ ````
+
+<i>Response: </i>
+
+````
+{
+    "id": 1,
+    "name": "novas features java 17",
+    "status": "FULL",
+    "registrations": [
+        {
+            "id": 1,
+            "status": "CREATED",
+            "description": "convite estudante",
+            "created_at": "2022-05-02T06:41:41",
+            "user_name": "{USERNAME}",
+            "event_name": "novas features java 17"
+        },
+        {
+            "id": 2,
+            "status": "CREATED",
+            "description": "convite estudante",
+            "created_at": "2022-05-02T06:42:30",
+            "user_name": "{USERNAME}",
+            "event_name": "novas features java 17"
+        },
+        {
+            "id": 3,
+            "status": "CREATED",
+            "description": "convite estudante",
+            "created_at": "2022-05-02T06:44:31",
+            "user_name": "{USERNAME}",
+            "event_name": "novas features java 17"
+        }
+    ],
+    "created_at": "2022-05-02T06:41:13",
+    "maximun_spots": 3,
+    "alocated_spots": 3
+}
+````
   DELETE - /events/{id} </br>
+<i>Request: </i>
+    
+   ````
+   curl --location --request DELETE 'localhost:9191/events/4' \
+--header 'Authorization: Bearer 659f90ca-9acd-4fe5-a1a8-XXX' 
+   ````
+   
+<i>Response: </i> 204 - NO CONTENT
+    
   PUT - /events/{id}/cancel </br>
+ <i>Request: </i>
+  ````
+  curl --location --request PUT 'localhost:9191/events/3/cancel' \
+--header 'Authorization: Bearer 659f90ca-9acd-4fe5-a1a8-xxxx' \
+--data-raw ''
+  ````
+ <i>Response: </i>
+ ````
+ {
+    "id": 3,
+    "name": "novas features java 17",
+    "status": "CANCELED",
+    "registrations": [],
+    "created_at": "2022-05-03T13:09:17",
+    "maximun_spots": 3,
+    "alocated_spots": 0
+}
+ ````
+ 
 
   <i>Person</i>
   
   GET - /people/{id} </br>
+  
+  <i>Request:</i>
+  ````
+curl --location --request GET 'localhost:9191/people/1' \
+--header 'Authorization: Bearer 659f90ca-9acd-4fe5-a1a8-XXX'\
+  ````
+  <i>Response:</i>
+  
+  ````
+  {
+    "id": 1,
+     "name": "{NAME}",
+     "email": "{EMAIL}",
+     "birth_date": "YYYY-MM-DD",
+     "username": "{USERNAME}",
+     "address": {
+         "public_place": "test place",
+         "number": 123,
+         "zip_code": "45646",
+         "neighborhood": "test",
+         "city": "test city",
+         "country": "test country"
+     }
+    "created_at": "2022-05-02T06:41:29"
+}
+  ````
+  
   POST - /people </br>
+  
+   <i>Request:</i>
+  ````
+  curl --location --request POST 'localhost:9191/people' \
+--header 'Authorization: Bearer 659f90ca-9acd-4fe5-a1a8-XXXX' \
+--header 'Content-Type: application/json'\
+--data-raw '{
+        "name": "{NAME}",
+        "email": "{EMAIL}",
+        "birth_date": "YYYY-MM-DD",
+        "username": "{USERNAME}",
+        "address": {
+            "public_place": "test place",
+            "number": 123,
+            "zip_code": "45646",
+            "neighborhood": "test",
+            "city": "test city",
+            "country": "test country"
+        }
+}'
+  
+  ````
+  
+   <i>Response:</i>
+  
+  ````
+  {
+    "id": 1,
+     "name": "{NAME}",
+     "email": "{EMAIL}",
+     "birth_date": "YYYY-MM-DD",
+     "username": "{USERNAME}",
+     "address": {
+         "public_place": "test place",
+         "number": 123,
+         "zip_code": "45646",
+         "neighborhood": "test",
+         "city": "test city",
+         "country": "test country"
+     }
+    "created_at": "2022-05-02T06:41:29"
+}
+  ````
   
   <i>Registration</i>
   
