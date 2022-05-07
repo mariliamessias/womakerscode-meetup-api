@@ -1,7 +1,7 @@
 <p align="center">
 <img src="https://d33wubrfki0l68.cloudfront.net/3d218442b01b3bdbf82b739df4d07e450234bf9e/08a8f/assets/images/womakerscode-brand.png" height="100">
 </p>
-<h1 align="center">Agendados de Meetups - Projeto de Conclusão do curso</h1>
+<h1 align="center">Agendador de Meetups - Projeto de Conclusão do curso</h1>
 <p align="center">
 </p>
 
